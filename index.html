@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timeback — L'assistant qui exécute tes actions marketing</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0B1220;
+    --panel:#101B30;
+    --panel-2:#152340;
+    --line:rgba(231,236,243,0.10);
+    --text:#E7ECF3;
+    --muted:#93A2B8;
+    --cyan:#22D3EE;
+    --emerald:#34D399;
+    --sand:#F2E9DC;
+    --sand-ink:#241F16;
+    --grad: linear-gradient(115deg, var(--cyan), var(--emerald));
+    --radius: 18px;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--text);
+    font-family:'Inter', Arial, sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{
+    font-family:'Space Grotesk', 'Inter', sans-serif;
+    font-weight:700;
+    line-height:1.12;
+    margin:0;
+    letter-spacing:-0.01em;
+  }
+  p{ margin:0; }
+  a{ color:inherit; text-decoration:none; }
+  img{ max-width:100%; display:block; }
+  .wrap{ max-width:1180px; margin:0 auto; padding:0 28px; }
+
+  .grad-text{
+    background:var(--grad);
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+  }
+
+  /* ---------- Ambient background ---------- */
+  .ambient{
+    position:fixed; inset:0; z-index:-1; overflow:hidden; background:var(--ink);
+  }
+  .ambient::before, .ambient::after{
+    content:""; position:absolute; border-radius:50%;
+    filter:blur(110px); opacity:0.4;
+  }
+  .ambient::before{
+    width:760px; height:760px; top:-260px; left:-200px;
+    background:radial-gradient(circle at 30% 30%, var(--cyan), transparent 65%);
+  }
+  .ambient::after{
+    width:680px; height:680px; bottom:-240px; right:-180px;
+    background:radial-gradient(circle at 70% 70%, var(--emerald), transparent 65%);
+    opacity:0.3;
+  }
+  .ambient-mid{
+    position:absolute; top:38%; left:50%; width:900px; height:500px;
+    transform:translate(-50%,-50%); border-radius:50%; filter:blur(130px); opacity:0.16;
+    background:radial-gradient(ellipse, var(--cyan), var(--emerald) 55%, transparent 75%);
+  }
+  .grain{
+    position:absolute; inset:0; opacity:0.05; mix-blend-mode:overlay; pointer-events:none;
+  }
+  .grid-overlay{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(231,236,243,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(231,236,243,0.05) 1px, transparent 1px);
+    background-size:46px 46px;
+    -webkit-mask-image:radial-gradient(ellipse 70% 55% at 50% 0%, #000 40%, transparent 78%);
+    mask-image:radial-gradient(ellipse 70% 55% at 50% 0%, #000 40%, transparent 78%);
+  }
+
+  /* ---------- Scroll reveal (blur resolves to sharp on entry) ---------- */
+  .reveal{
+    opacity:0; filter:blur(22px); transform:translateY(22px) scale(0.98);
+    transition:opacity 1s ease, filter 1s ease, transform 1s ease;
+  }
+  .reveal.in-view{ opacity:1; filter:blur(0); transform:translateY(0) scale(1); }
+  .reveal.delay-1{ transition-delay:.15s; }
+  .reveal.delay-2{ transition-delay:.3s; }
+  .reveal.delay-3{ transition-delay:.45s; }
+
+  /* ---------- Navbar ---------- */
+  header{
+    position:sticky; top:0; z-index:50;
+    background:rgba(11,18,32,0.78);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 28px; max-width:1180px; margin:0 auto;
+  }
+  .logo{ display:flex; align-items:center; gap:10px; }
+  .logo-word{ font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:20px; }
+  .nav-links{ display:flex; align-items:center; gap:36px; }
+  .nav-links a{
+    font-size:15px; color:var(--muted); transition:color .18s ease;
+  }
+  .nav-links a:hover{ color:var(--text); }
+  .nav-cta{
+    padding:10px 20px; border-radius:999px;
+    background:var(--grad); color:var(--ink); font-weight:600; font-size:14px;
+  }
+  .burger{
+    display:none; flex-direction:column; gap:5px; background:none; border:none;
+    cursor:pointer; padding:6px;
+  }
+  .burger span{ width:22px; height:2px; background:var(--text); border-radius:2px; transition:.2s; }
+
+  .mobile-menu{
+    display:none; flex-direction:column; gap:2px;
+    background:var(--panel); border-bottom:1px solid var(--line);
+    padding:8px 28px 20px;
+  }
+  .mobile-menu a{
+    padding:12px 0; color:var(--text); border-bottom:1px solid var(--line); font-size:15px;
+  }
+  .mobile-menu a:last-child{ border-bottom:none; }
+  body.menu-open .mobile-menu{ display:flex; }
+  body.menu-open .burger span:nth-child(1){ transform:translateY(7px) rotate(45deg); }
+  body.menu-open .burger span:nth-child(2){ opacity:0; }
+  body.menu-open .burger span:nth-child(3){ transform:translateY(-7px) rotate(-45deg); }
+
+  @media (max-width: 860px){
+    .nav-links, .nav-cta.desktop-only{ display:none; }
+    .burger{ display:flex; }
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    padding:96px 0 70px;
+  }
+  .hero-grid{
+    display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;
+  }
+  .hero-badge{
+    display:inline-flex; align-items:center; gap:9px;
+    padding:8px 16px; border-radius:999px; background:var(--panel); border:1px solid var(--line);
+    font-size:13.5px; color:var(--muted); margin-bottom:22px;
+  }
+  .dot-pulse{ width:7px; height:7px; border-radius:50%; background:var(--emerald); position:relative; flex:none; }
+  .dot-pulse::after{
+    content:""; position:absolute; inset:-5px; border-radius:50%; border:1.5px solid var(--emerald);
+    animation:pulse 2.2s ease-out infinite;
+  }
+  @keyframes pulse{ 0%{ transform:scale(0.6); opacity:0.9; } 100%{ transform:scale(1.9); opacity:0; } }
+  .eyebrow-free h1{ font-size:clamp(34px, 4.6vw, 54px); }
+  .hero-sub{
+    margin-top:22px; max-width:46ch; color:var(--muted); font-size:17px;
+  }
+  .hero-actions{ display:flex; gap:14px; margin-top:34px; flex-wrap:wrap; }
+  .btn-primary{
+    padding:14px 26px; border-radius:999px; background:var(--grad);
+    color:var(--ink); font-weight:600; font-size:15px;
+  }
+  .btn-ghost{
+    padding:14px 26px; border-radius:999px; border:1px solid var(--line);
+    color:var(--text); font-weight:500; font-size:15px;
+  }
+
+  /* Hero mockup: the plan/confirm card, drawn from the product's actual mechanic */
+  .mock{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:22px; box-shadow:0 30px 60px -20px rgba(0,0,0,0.55);
+  }
+  .mock-row{ display:flex; gap:10px; align-items:flex-start; margin-bottom:16px; }
+  .mock-bubble{
+    background:var(--panel-2); border-radius:14px; padding:12px 14px; font-size:14px;
+    color:var(--text); max-width:88%;
+  }
+  .mock-plan{
+    background:var(--ink); border:1px solid var(--line); border-radius:14px; padding:16px;
+  }
+  .mock-plan-title{ font-size:13px; color:var(--muted); margin-bottom:10px; }
+  .mock-fields{ display:grid; grid-template-columns:1fr 1fr; gap:10px 18px; margin-bottom:16px; }
+  .mock-field-label{ font-size:11.5px; color:var(--muted); }
+  .mock-field-value{ font-size:14px; margin-top:2px; }
+  .mock-select{
+    font-family:'Inter', sans-serif; font-size:14px; margin-top:3px; width:100%;
+    background:transparent; color:var(--text); border:1px solid transparent; border-radius:8px;
+    padding:4px 6px;
+  }
+  .mock-select:disabled{ opacity:1; -webkit-text-fill-color:var(--text); appearance:none; -webkit-appearance:none; }
+  .mock-select:not(:disabled){
+    background:var(--panel-2); border-color:rgba(52,211,153,0.5); cursor:pointer;
+  }
+  .mock-success{ position:relative; }
+  .mock-restart{
+    margin-left:auto; font-size:12.5px; color:var(--muted); text-decoration:underline; cursor:pointer; flex:none;
+  }
+  .mock-restart:hover{ color:var(--text); }
+  .mock-actions{ display:flex; gap:10px; }
+  .mock-confirm{
+    flex:1; text-align:center; padding:10px; border-radius:10px; background:var(--grad);
+    color:var(--ink); font-size:13.5px; font-weight:600;
+  }
+  .mock-edit{
+    padding:10px 16px; border-radius:10px; border:1px solid var(--line); font-size:13.5px; color:var(--muted);
+    cursor:pointer; transition:border-color .2s ease;
+  }
+  .mock-edit:hover{ border-color:var(--emerald); }
+  .mock-confirm{ cursor:pointer; }
+  .mock-success{
+    display:none; align-items:center; gap:10px; padding:12px; border-radius:10px;
+    background:rgba(52,211,153,0.12); border:1px solid rgba(52,211,153,0.35); color:var(--emerald);
+    font-size:13.5px; font-weight:600;
+  }
+  .mock-success.show{ display:flex; }
+  .mock-check{
+    width:20px; height:20px; border-radius:50%; background:var(--grad); flex:none;
+    display:flex; align-items:center; justify-content:center; color:var(--ink); font-size:12px; font-weight:700;
+  }
+
+  /* ---------- Connector bar ---------- */
+  .connectors{ padding:34px 0; border-top:1px solid var(--line); border-bottom:1px solid var(--line); background:var(--panel); }
+  .marquee{ overflow:hidden; -webkit-mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); mask-image:linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent); }
+  .marquee-track{
+    display:flex; align-items:center; gap:52px; width:max-content;
+    animation:scroll-left 38s linear infinite;
+  }
+  .marquee:hover .marquee-track{ animation-play-state:paused; }
+  .chip{
+    display:flex; align-items:center; gap:10px;
+    white-space:nowrap; font-size:15px; font-weight:500; color:var(--muted);
+    transition:color .25s ease, opacity .25s ease;
+  }
+  .chip:hover{ color:var(--text); }
+  .chip svg{ flex:none; border-radius:6px; }
+  @keyframes scroll-left{ from{ transform:translateX(0);} to{ transform:translateX(-50%);} }
+
+  /* ---------- How it works ---------- */
+  .section{ padding:96px 0; }
+  .section-head{ max-width:56ch; margin-bottom:56px; }
+  .section-head h2{ font-size:clamp(28px, 3.4vw, 38px); }
+  .section-head p{ margin-top:14px; color:var(--muted); font-size:16px; }
+
+  .steps{ display:grid; grid-template-columns:repeat(3, 1fr); gap:0; border-top:1px solid var(--line); }
+  .step{ padding:34px 26px 0; border-right:1px solid var(--line); }
+  .step:last-child{ border-right:none; }
+  .step-num{ font-family:'Space Grotesk', sans-serif; font-size:15px; color:var(--emerald); margin-bottom:14px; }
+  .step h3{ font-size:19px; margin-bottom:10px; }
+  .step p{ color:var(--muted); font-size:15px; }
+  @media (max-width: 780px){
+    .steps{ grid-template-columns:1fr; }
+    .step{ border-right:none; border-bottom:1px solid var(--line); padding-bottom:30px; }
+  }
+
+  /* ---------- Feature rows ---------- */
+  .feature-row{
+    display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;
+    padding:56px 0; border-top:1px solid var(--line);
+  }
+  .feature-row:last-child{ border-bottom:1px solid var(--line); }
+  .feature-row.reverse .feature-visual{ order:2; }
+  .feature-row.reverse .feature-text{ order:1; }
+  .feature-text h3{ font-size:24px; margin-bottom:14px; }
+  .feature-text p{ color:var(--muted); font-size:15.5px; max-width:44ch; }
+  .feature-visual{
+    background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+    padding:26px; min-height:200px; display:flex; flex-direction:column; justify-content:center; gap:12px;
+  }
+  .bar{ height:10px; border-radius:6px; background:var(--panel-2); overflow:hidden; }
+  .bar > span{ display:block; height:100%; background:var(--grad); }
+  .format-tags{ display:flex; gap:10px; flex-wrap:wrap; }
+  .format-tag{ padding:8px 14px; border-radius:8px; background:var(--panel-2); font-size:13px; color:var(--muted); }
+
+  .dashboard-visual{ gap:20px; }
+  .dash-top{ display:flex; gap:22px; }
+  .kpi-num{ font-family:'Space Grotesk', sans-serif; font-size:24px; font-weight:700; }
+  .kpi-suffix{ font-size:14px; color:var(--emerald); }
+  .kpi-label{ font-size:12.5px; color:var(--muted); margin-top:2px; }
+  .dash-bottom{ display:flex; align-items:center; gap:22px; }
+  .dash-chart{ flex:1; height:70px; }
+  .dash-donut{ width:64px; height:64px; flex:none; }
+  @media (max-width: 860px){
+    .feature-row, .feature-row.reverse{ grid-template-columns:1fr; }
+    .feature-row.reverse .feature-visual, .feature-row.reverse .feature-text{ order:initial; }
+  }
+
+  /* ---------- Testimonials (light break section, vertical scrolling wall) ---------- */
+  .testi-section{ background:transparent; color:var(--text); padding:96px 0; overflow:hidden; }
+  .testi-section .section-head p{ color:var(--muted); }
+  .testi-wall{
+    display:grid; grid-template-columns:repeat(3, 1fr); gap:20px;
+    height:640px; margin-top:48px;
+    -webkit-mask-image:linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
+    mask-image:linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
+  }
+  .testi-col{ overflow:hidden; }
+  .testi-col-track{ display:flex; flex-direction:column; gap:20px; animation:scroll-up 46s linear infinite; }
+  .testi-col:nth-child(2) .testi-col-track{ animation-duration:52s; animation-direction:reverse; }
+  .testi-col:nth-child(3) .testi-col-track{ animation-duration:49s; }
+  .testi-wall:hover .testi-col-track{ animation-play-state:paused; }
+  @keyframes scroll-up{ from{ transform:translateY(0);} to{ transform:translateY(-50%);} }
+  .testi-card{
+    background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:22px;
+    box-shadow:0 14px 30px -22px rgba(0,0,0,0.6);
+    transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+    position:relative;
+  }
+  .testi-card:hover{ transform:translateY(-4px); border-color:rgba(52,211,153,0.4); box-shadow:0 22px 42px -20px rgba(0,0,0,0.7); }
+  .testi-who{ display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .avatar{
+    width:46px; height:46px; border-radius:50%; flex:none;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .avatar svg{ width:24px; height:24px; }
+  .testi-name{ font-size:14.5px; font-weight:700; color:var(--text); }
+  .testi-category{ font-size:12px; color:var(--muted); margin-top:1px; }
+  .testi-stars{ margin-bottom:12px; font-size:13px; letter-spacing:2px; color:var(--emerald); }
+  .testi-card p.quote{ font-size:14px; line-height:1.6; color:var(--muted); }
+  @media (max-width: 860px){ .testi-wall{ grid-template-columns:1fr; height:520px; } }
+
+  /* ---------- CTA banner ---------- */
+  .cta-banner{
+    max-width:1180px; margin:96px auto; padding:64px 48px;
+    background:var(--panel); border:1px solid var(--line); border-radius:24px;
+    text-align:center;
+  }
+  .cta-banner h2{ font-size:clamp(26px, 3.4vw, 36px); margin-bottom:16px; }
+  .cta-banner p{ color:var(--muted); max-width:48ch; margin:0 auto 30px; }
+
+  /* ---------- Footer ---------- */
+  footer{ border-top:1px solid var(--line); padding:56px 0 34px; }
+  .footer-grid{ display:grid; grid-template-columns:1.4fr repeat(3, 1fr); gap:40px; margin-bottom:48px; }
+  .footer-brand p{ color:var(--muted); font-size:14px; margin-top:14px; max-width:32ch; }
+  .footer-col h4{ font-size:14px; margin-bottom:16px; color:var(--text); }
+  .footer-col a{ display:block; color:var(--muted); font-size:14px; padding:6px 0; }
+  .footer-bottom{ display:flex; justify-content:space-between; color:var(--muted); font-size:13px; border-top:1px solid var(--line); padding-top:24px; flex-wrap:wrap; gap:10px;}
+  @media (max-width: 780px){ .footer-grid{ grid-template-columns:1fr 1fr; } }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+  }
+
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--emerald); outline-offset:3px; }
+</style>
+</head>
+<body>
+
+<div class="ambient">
+  <div class="ambient-mid"></div>
+  <div class="grid-overlay"></div>
+  <svg class="grain" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter>
+    <rect width="100%" height="100%" filter="url(#noise)"/>
+  </svg>
+</div>
+
+<header>
+  <nav>
+    <div class="logo">
+      <svg width="30" height="30" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="navRing" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#22D3EE"/>
+            <stop offset="100%" stop-color="#34D399"/>
+          </linearGradient>
+        </defs>
+        <circle cx="250" cy="190" r="100" fill="none" stroke="url(#navRing)" stroke-width="15"/>
+        <g stroke="#0B1220" stroke-width="6" stroke-linecap="round">
+          <line x1="250" y1="110" x2="250" y2="125"/>
+          <line x1="299.3" y1="126.7" x2="290.5" y2="137.3"/>
+          <line x1="321.7" y1="169.2" x2="308" y2="174.7"/>
+          <line x1="321.7" y1="210.8" x2="308" y2="205.3"/>
+          <line x1="299.3" y1="253.3" x2="290.5" y2="242.7"/>
+          <line x1="250" y1="270" x2="250" y2="255"/>
+          <line x1="200.7" y1="253.3" x2="209.5" y2="242.7"/>
+          <line x1="178.3" y1="210.8" x2="192" y2="205.3"/>
+          <line x1="178.3" y1="169.2" x2="192" y2="174.7"/>
+          <line x1="200.7" y1="126.7" x2="209.5" y2="137.3"/>
+        </g>
+        <line x1="250" y1="190" x2="308" y2="110" stroke="url(#navRing)" stroke-width="14" stroke-linecap="round"/>
+        <circle cx="250" cy="190" r="14" fill="#0B1220"/>
+        <circle cx="250" cy="190" r="5.5" fill="url(#navRing)"/>
+      </svg>
+      <span class="logo-word">Time<span class="grad-text">back</span></span>
+    </div>
+
+    <div class="nav-links">
+      <a href="#fonctionnalites">Fonctionnalités</a>
+      <a href="#comment-ca-marche">Comment ça marche</a>
+      <a href="#connecteurs">Connecteurs</a>
+      <a href="#avis">Avis</a>
+    </div>
+
+    <a href="#" class="nav-cta desktop-only">Essayer gratuitement</a>
+
+    <button class="burger" onclick="document.body.classList.toggle('menu-open')" aria-label="Ouvrir le menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu">
+    <a href="#fonctionnalites">Fonctionnalités</a>
+    <a href="#comment-ca-marche">Comment ça marche</a>
+    <a href="#connecteurs">Connecteurs</a>
+    <a href="#avis">Avis</a>
+    <a href="#">Essayer gratuitement</a>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="eyebrow-free">
+        <div class="hero-badge reveal">
+          <span class="dot-pulse"></span> Intelligence artificielle · réseaux sociaux · automatisation
+        </div>
+        <h1 class="reveal delay-1">Écris une phrase.<br>Timeback <span class="grad-text">s'occupe du reste.</span></h1>
+        <p class="hero-sub reveal delay-2">Une IA connectée à tes réseaux sociaux — Instagram, Facebook, TikTok, WhatsApp — et à ta messagerie Gmail. Décris ce que tu veux faire en langage naturel, valide le plan, et laisse-la l'exécuter à ta place.</p>
+        <div class="hero-actions reveal delay-3">
+          <a href="#" class="btn-primary">Essayer gratuitement</a>
+          <a href="#comment-ca-marche" class="btn-ghost">Voir comment ça marche</a>
+        </div>
+      </div>
+
+      <div class="mock reveal delay-2">
+        <div class="mock-row">
+          <div class="mock-bubble" id="mockMessage">Prends cette affiche, adapte-la au format Story Instagram et publie-la demain à 18h.</div>
+        </div>
+        <div class="mock-plan">
+          <div class="mock-plan-title">Voici ce que je m'apprête à faire</div>
+          <div class="mock-fields" id="mockFields">
+            <div><div class="mock-field-label">Format</div>
+              <select class="mock-select" id="fieldFormat" disabled>
+                <option>Story Instagram</option><option>Post carré</option><option>Reel / vidéo courte</option><option>Bannière</option>
+              </select>
+            </div>
+            <div><div class="mock-field-label">Plateforme</div>
+              <select class="mock-select" id="fieldPlatform" disabled>
+                <option>Instagram</option><option>Facebook</option><option>TikTok</option><option>WhatsApp</option>
+              </select>
+            </div>
+            <div><div class="mock-field-label">Date</div>
+              <select class="mock-select" id="fieldDate" disabled>
+                <option>Demain</option><option>Aujourd'hui</option><option>Vendredi</option><option>Lundi prochain</option>
+              </select>
+            </div>
+            <div><div class="mock-field-label">Heure</div>
+              <select class="mock-select" id="fieldTime" disabled>
+                <option>18h00</option><option>09h00</option><option>12h00</option><option>20h00</option>
+              </select>
+            </div>
+          </div>
+          <div class="mock-actions" id="mockActions">
+            <div class="mock-edit" id="mockEditBtn">Modifier</div>
+            <div class="mock-confirm" id="mockConfirmBtn">Confirmer</div>
+          </div>
+          <div class="mock-success" id="mockSuccess">
+            <div class="mock-check">✓</div>
+            <span id="mockSuccessText">Publication programmée pour demain, 18h00</span>
+            <span class="mock-restart" id="mockRestartBtn">Recommencer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="connectors" id="connecteurs">
+    <div class="marquee">
+      <div class="marquee-track" id="marqueeTrack"></div>
+    </div>
+  </section>
+
+  <section class="section" id="comment-ca-marche">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Trois étapes, aucune bascule entre les apps</h2>
+        <p>Timeback fait le lien entre ce que tu veux et les outils qui l'exécutent.</p>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-num">01</div>
+          <h3>Connecte tes outils</h3>
+          <p>Relie Instagram, Facebook, TikTok, WhatsApp et Gmail via leurs API officielles. Aucun mot de passe ne transite jamais par Timeback.</p>
+        </div>
+        <div class="step reveal delay-1">
+          <div class="step-num">02</div>
+          <h3>Écris ta demande</h3>
+          <p>En une phrase : publier, programmer, adapter un visuel, préparer un message. L'IA comprend l'intention et prépare l'action.</p>
+        </div>
+        <div class="step reveal delay-2">
+          <div class="step-num">03</div>
+          <h3>Valide, puis laisse faire</h3>
+          <p>Timeback affiche le plan exact avant d'agir. Tu confirmes, il exécute. Pour toute suppression, une confirmation explicite reste obligatoire.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="fonctionnalites" style="padding-top:0;">
+    <div class="wrap">
+      <div class="feature-row reveal">
+        <div class="feature-text">
+          <h3>Un visuel, décliné pour chaque réseau social</h3>
+          <p>Importe une affiche une seule fois. Timeback l'adapte au format Story, post carré ou vidéo courte, en gardant ton identité visuelle intacte.</p>
+        </div>
+        <div class="feature-visual">
+          <div class="format-tags">
+            <span class="format-tag">Story 9:16</span>
+            <span class="format-tag">Post 1:1</span>
+            <span class="format-tag">Reel 9:16</span>
+            <span class="format-tag">Bannière 16:9</span>
+          </div>
+          <div class="bar"><span style="width:78%"></span></div>
+          <div class="bar"><span style="width:52%"></span></div>
+          <div class="bar"><span style="width:90%"></span></div>
+        </div>
+      </div>
+
+      <div class="feature-row reverse reveal">
+        <div class="feature-text">
+          <h3>Des automatisations qui tiennent sur une phrase</h3>
+          <p>« Publie cette affiche tous les jours à 18h pendant 7 jours sur Instagram et Facebook. » Timeback comprend le contenu, la fréquence et la durée, puis te montre le résumé avant de lancer quoi que ce soit.</p>
+        </div>
+        <div class="feature-visual">
+          <div class="mock-plan-title">14 actions vont être programmées</div>
+          <div class="format-tags">
+            <span class="format-tag">Lun–Dim · 18h</span>
+            <span class="format-tag">Instagram</span>
+            <span class="format-tag">Facebook</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="feature-row reveal">
+        <div class="feature-text">
+          <h3>Du texte marketing qui a ton ton</h3>
+          <p>Légendes, idées de contenu, campagnes sur plusieurs jours : demande, ajuste le ton, et récupère un texte prêt à publier par l'IA.</p>
+        </div>
+        <div class="feature-visual">
+          <div class="mock-bubble" style="max-width:100%;">« Crée-moi un texte Instagram pour cette affiche, ton professionnel et dynamique. »</div>
+        </div>
+      </div>
+
+      <div class="feature-row reverse reveal">
+        <div class="feature-text">
+          <h3>Un tableau de bord qui suit ce qui marche</h3>
+          <p>Portée, engagement, clics : Timeback centralise les performances de tous tes réseaux sociaux au même endroit, sans jongler entre les apps.</p>
+        </div>
+        <div class="feature-visual dashboard-visual" id="dashboardVisual">
+          <div class="dash-top">
+            <div class="kpi"><div class="kpi-num"><span id="kpi1">0</span><span class="kpi-suffix">%</span></div><div class="kpi-label">Engagement</div></div>
+            <div class="kpi"><div class="kpi-num"><span id="kpi2">0</span><span class="kpi-suffix">k</span></div><div class="kpi-label">Portée</div></div>
+            <div class="kpi"><div class="kpi-num"><span id="kpi3">0</span><span class="kpi-suffix">k</span></div><div class="kpi-label">Clics</div></div>
+          </div>
+          <div class="dash-bottom">
+            <svg class="dash-chart" viewBox="0 0 220 70" preserveAspectRatio="none">
+              <polyline points="0,55 30,48 60,50 90,30 120,34 150,16 180,20 220,6" fill="none" stroke="url(#navRing)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <svg class="dash-donut" viewBox="0 0 42 42">
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke="var(--panel-2)" stroke-width="5"/>
+              <circle cx="21" cy="21" r="15.9" fill="none" stroke="url(#navRing)" stroke-width="5" stroke-dasharray="68 100" stroke-linecap="round" transform="rotate(-90 21 21)"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testi-section" id="avis">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <h2>Ce que ça change au quotidien</h2>
+        <p>Retours d'utilisateurs à titre d'exemple, à remplacer par de vrais témoignages une fois en production.</p>
+      </div>
+      <div class="testi-wall">
+        <div class="testi-col"><div class="testi-col-track" id="testiCol1"></div></div>
+        <div class="testi-col"><div class="testi-col-track" id="testiCol2"></div></div>
+        <div class="testi-col"><div class="testi-col-track" id="testiCol3"></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <div class="cta-banner reveal">
+      <h2>Récupère les heures passées à jongler entre tes réseaux sociaux</h2>
+      <p>Connecte tes outils, écris une phrase, garde le contrôle sur chaque action de ton IA.</p>
+      <a href="#" class="btn-primary">Essayer Timeback gratuitement</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">
+          <svg width="26" height="26" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="250" cy="190" r="100" fill="none" stroke="url(#navRing)" stroke-width="15"/>
+            <line x1="250" y1="190" x2="308" y2="110" stroke="url(#navRing)" stroke-width="14" stroke-linecap="round"/>
+            <circle cx="250" cy="190" r="14" fill="#0B1220"/>
+          </svg>
+          <span class="logo-word">Time<span class="grad-text">back</span></span>
+        </div>
+        <p>L'assistant marketing qui exécute, pas seulement qui suggère.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Produit</h4>
+        <a href="#fonctionnalites">Fonctionnalités</a>
+        <a href="#comment-ca-marche">Comment ça marche</a>
+        <a href="#connecteurs">Connecteurs</a>
+      </div>
+      <div class="footer-col">
+        <h4>Société</h4>
+        <a href="#">À propos</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Légal</h4>
+        <a href="#">Confidentialité</a>
+        <a href="#">Conditions</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Timeback. Tous droits réservés.</span>
+      <span>Fait avec Claude Code · Vercel · Supabase</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // ---- Connector ticker (stylized brand-colored icons; not the platforms' official logo files) ----
+  const connectors = [
+    { name:"Instagram", icon:`<svg viewBox="0 0 30 30" width="19" height="19"><defs><linearGradient id="igGrad" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#FEC53F"/><stop offset="50%" stop-color="#E1306C"/><stop offset="100%" stop-color="#5851DB"/></linearGradient></defs><rect x="0" y="0" width="30" height="30" rx="9" fill="url(#igGrad)"/><rect x="8.5" y="8.5" width="13" height="13" rx="4.2" fill="none" stroke="#fff" stroke-width="2"/><circle cx="15" cy="15" r="3.4" fill="none" stroke="#fff" stroke-width="2"/><circle cx="19.6" cy="10.4" r="1.05" fill="#fff"/></svg>` },
+    { name:"Facebook", icon:`<svg viewBox="0 0 30 30" width="19" height="19"><circle cx="15" cy="15" r="15" fill="#1877F2"/><path d="M16.9 22v-7.1h2.4l.3-2.8h-2.7v-1.8c0-.8.2-1.4 1.4-1.4h1.5V6.4c-.3 0-1.1-.1-2.1-.1-2.1 0-3.6 1.3-3.6 3.7v2.1h-2.4v2.8h2.4V22h2.8Z" fill="#fff"/></svg>` },
+    { name:"TikTok", icon:`<svg viewBox="0 0 30 30" width="19" height="19"><rect x="0" y="0" width="30" height="30" rx="9" fill="#0B0B0B"/><circle cx="11.8" cy="20.4" r="3.4" fill="#fff"/><rect x="14.4" y="6.5" width="2.2" height="13.9" rx="1.1" fill="#fff"/><path d="M16.6 6.5c.3 2.8 2.4 4.9 5.1 5.2v2.8c-1.9-.1-3.6-.8-5.1-1.9" fill="#fff"/></svg>` },
+    { name:"WhatsApp", icon:`<svg viewBox="0 0 30 30" width="19" height="19"><path d="M15 3.5c6.1 0 11 4.7 11 10.6 0 5.8-4.9 10.6-11 10.6-1.9 0-3.7-.5-5.3-1.3L3.5 25l1.7-6c-1-1.7-1.6-3.6-1.6-5.7C3.6 8.4 8.9 3.5 15 3.5Z" fill="#25D366"/><path d="M20.4 17.2c-.6-.3-1.9-.9-2.2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-1.5-.7-2.6-1.3-3.7-3-.3-.5.3-.5.8-1.5.1-.2.1-.4 0-.5-.1-.2-.7-1.6-.9-2.2-.2-.5-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4 0 1.4 1 2.8 1.2 3 .1.2 2 3.1 4.9 4.3.7.3 1.2.5 1.6.6.7.2 1.3.2 1.8.1.5-.1 1.7-.7 2-1.4.2-.7.2-1.2.1-1.4-.1-.1-.3-.2-.6-.4Z" fill="#fff"/></svg>` },
+    { name:"Gmail", icon:`<svg viewBox="0 0 30 30" width="19" height="19"><rect x="4" y="7.5" width="22" height="15" rx="2" fill="#fff" stroke="#EA4335" stroke-width="1.6"/><path d="M4.6 8.2 15 16.2l10.4-8" fill="none" stroke="#EA4335" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"/></svg>` }
+  ];
+  const marqueeTrack = document.getElementById('marqueeTrack');
+  const buildTicker = () => connectors.map(c => `<div class="chip">${c.icon}${c.name}</div>`).join('');
+  marqueeTrack.innerHTML = buildTicker() + buildTicker();
+
+  // ---- Testimonial wall (fabricated example quotes; illustrated avatar icons, not real people's photos) ----
+  const palette = ['#22D3EE','#34D399','#818CF8','#F59E0B','#F472B6','#60A5FA'];
+  const personIcon = `<svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4.4 3.6-7 8-7s8 2.6 8 7v1H4v-1z"/></svg>`;
+  const testimonials = [
+    { quote: "Je passais mes soirées à programmer mes posts sur trois apps différentes. Maintenant j'écris une phrase et c'est fait.", name: "Léa Moreau", category: "Créatrice de contenu" },
+    { quote: "L'étape de validation avant publication me rassure — je vois exactement ce qui va se passer avant de dire oui.", name: "Karim Belhadj", category: "Fondateur, petite marque" },
+    { quote: "Adapter une affiche pour Instagram, Facebook et TikTok en une seule demande, ça change vraiment la semaine.", name: "Sophie Renard", category: "Indépendante" },
+    { quote: "Les automatisations récurrentes m'ont fait gagner un temps que je réinvestis directement dans mes clients.", name: "Antoine Dubuc", category: "Consultant marketing" },
+    { quote: "Le tableau de bord m'évite d'ouvrir quatre apps chaque matin pour savoir ce qui a marché.", name: "Nora Tazi", category: "Community manager" },
+    { quote: "Répondre à mes messages WhatsApp pendant que je m'occupe d'autre chose, c'est exactement ce qu'il me manquait.", name: "Yanis Fabre", category: "Boutique en ligne" },
+    { quote: "Une IA qui me montre le plan avant d'agir, ça change tout par rapport aux outils qui publient sans prévenir.", name: "Camille Vidal", category: "Freelance" },
+    { quote: "J'ai enfin arrêté de recréer la même affiche à la main pour chaque réseau social.", name: "Hugo Perrin", category: "Petit commerce" },
+    { quote: "Le gain de temps est réel : ce que je faisais en une heure se fait maintenant en une phrase.", name: "Manon Girard", category: "Coach en ligne" }
+  ];
+  const cardHTML = t => `
+    <div class="testi-card">
+      <div class="testi-who">
+        <div class="avatar" style="background:${palette[Math.floor(Math.random()*palette.length)]}">${personIcon}</div>
+        <div>
+          <div class="testi-name">${t.name}</div>
+          <div class="testi-category">${t.category}</div>
+        </div>
+      </div>
+      <div class="testi-stars">★★★★★</div>
+      <p class="quote">« ${t.quote} »</p>
+    </div>`;
+  const col1 = [testimonials[0], testimonials[3], testimonials[6]];
+  const col2 = [testimonials[1], testimonials[4], testimonials[7]];
+  const col3 = [testimonials[2], testimonials[5], testimonials[8]];
+  const fillCol = (id, list) => { document.getElementById(id).innerHTML = list.map(cardHTML).join('') + list.map(cardHTML).join(''); };
+  fillCol('testiCol1', col1);
+  fillCol('testiCol2', col2);
+  fillCol('testiCol3', col3);
+
+  // ---- Interactive hero demo: fully manual — nothing changes unless the user clicks ----
+  const el = id => document.getElementById(id);
+  const fieldIds = ['fieldFormat','fieldPlatform','fieldDate','fieldTime'];
+
+  el('mockEditBtn').addEventListener('click', () => {
+    fieldIds.forEach(id => el(id).disabled = false);
+    el(fieldIds[0]).focus();
+  });
+
+  el('mockConfirmBtn').addEventListener('click', () => {
+    const date = el('fieldDate').value;
+    const time = el('fieldTime').value;
+    fieldIds.forEach(id => el(id).disabled = true);
+    el('mockSuccessText').textContent = `Publication programmée · ${date}, ${time}`;
+    el('mockFields').style.display = 'none';
+    el('mockActions').style.display = 'none';
+    el('mockSuccess').classList.add('show');
+  });
+
+  el('mockRestartBtn').addEventListener('click', () => {
+    el('mockSuccess').classList.remove('show');
+    el('mockFields').style.display = 'grid';
+    el('mockActions').style.display = 'flex';
+  });
+
+  // ---- KPI count-up when the dashboard scrolls into view ----
+  const animateCount = (id, target, decimals, suffix) => {
+    const node = el(id);
+    const duration = 2800, start = performance.now();
+    const step = (now) => {
+      const p = Math.min((now - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const val = target * eased;
+      node.textContent = decimals ? val.toFixed(decimals).replace('.', ',') : Math.round(val);
+      if (p < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  let kpiPlayed = false;
+  const kpiObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting && !kpiPlayed) {
+        kpiPlayed = true;
+        animateCount('kpi1', 34, 0);
+        animateCount('kpi2', 128, 0);
+        animateCount('kpi3', 2.4, 1);
+      }
+    });
+  }, { threshold: 0.4 });
+  kpiObserver.observe(document.getElementById('dashboardVisual'));
+
+  // ---- Scroll reveal: elements blur in as they enter the viewport ----
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in-view'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+
+</body>
+</html>
