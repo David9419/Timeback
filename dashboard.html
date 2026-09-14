@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -25,9 +25,9 @@
   a{ color:inherit; text-decoration:none; }
   button{ font-family:'Inter', sans-serif; cursor:pointer; }
   .grad-text{ background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
-
+ 
   .app-shell{ display:flex; min-height:100vh; }
-
+ 
   /* ---------- Sidebar ---------- */
   .sidebar{
     width:250px; flex:none; background:var(--panel); border-right:1px solid var(--line);
@@ -46,7 +46,7 @@
   .nav-item.active svg{ opacity:1; }
   .nav-item.active .nav-dot{ background:var(--emerald); }
   .nav-dot{ width:5px; height:5px; border-radius:50%; background:transparent; margin-left:auto; }
-
+ 
   .side-foot{ border-top:1px solid var(--line); padding-top:14px; margin-top:10px; }
   .user-card{ display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:10px; }
   .user-avatar{ width:34px; height:34px; border-radius:50%; background:var(--grad); flex:none; }
@@ -54,15 +54,15 @@
   .user-plan{ font-size:11.5px; color:var(--muted); }
   .logout-link{ display:block; margin-top:10px; font-size:13px; color:var(--muted); padding:8px 10px; }
   .logout-link:hover{ color:var(--text); }
-
+ 
   /* ---------- Main ---------- */
   .main{ flex:1; padding:36px 44px; max-width:1100px; }
   .page-head{ margin-bottom:30px; }
   .page-head p{ color:var(--muted); font-size:14.5px; margin-top:6px; }
-
+ 
   .section{ display:none; }
   .section.active{ display:block; }
-
+ 
   /* Accueil */
   .prompt-box{
     background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:26px;
@@ -84,13 +84,13 @@
     font-size:13.5px; color:var(--muted); cursor:pointer; transition:.18s ease;
   }
   .sugg-chip:hover{ color:var(--text); border-color:rgba(52,211,153,0.4); }
-
+ 
   .stat-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; margin-bottom:30px; }
   .stat-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px; }
   .stat-num{ font-size:26px; font-weight:700; font-family:'Space Grotesk', sans-serif; }
   .stat-num span{ color:var(--emerald); font-size:15px; }
   .stat-label{ font-size:13px; color:var(--muted); margin-top:4px; }
-
+ 
   .mini-title{ font-size:14px; font-weight:600; margin-bottom:14px; color:var(--text); }
   .connector-row{ display:flex; gap:12px; flex-wrap:wrap; }
   .mini-connector{
@@ -98,7 +98,7 @@
     background:var(--panel); border:1px solid var(--line); font-size:13px; color:var(--muted);
   }
   .status-dot{ width:7px; height:7px; border-radius:50%; background:#F59E0B; }
-
+ 
   /* Assistant IA (chat view) */
   .chat-window{
     background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:24px;
@@ -119,7 +119,7 @@
     color:var(--text); font-size:14.5px;
   }
   .chat-input-row button{ padding:0 22px; border-radius:12px; background:var(--grad); border:none; color:var(--ink); font-weight:700; }
-
+ 
   /* Connecteurs */
   .connector-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:16px; }
   .connector-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:12px; }
@@ -131,7 +131,7 @@
     color:var(--text); font-size:13.5px; font-weight:600;
   }
   .btn-connect:hover{ border-color:rgba(52,211,153,0.5); }
-
+ 
   /* Placeholder sections */
   .placeholder{
     display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
@@ -140,7 +140,42 @@
   .placeholder svg{ margin-bottom:16px; opacity:0.7; }
   .placeholder h3{ color:var(--text); margin-bottom:8px; font-size:17px; }
   .placeholder p{ font-size:14px; max-width:40ch; }
-
+ 
+  /* Création de contenu */
+  .subtabs{ display:flex; gap:6px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:5px; margin-bottom:22px; width:fit-content; }
+  .subtab{ padding:9px 18px; border-radius:9px; font-size:13.5px; font-weight:600; color:var(--muted); cursor:pointer; }
+  .subtab.active{ background:var(--grad); color:var(--ink); }
+  .tool-panel{ display:none; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
+  .tool-panel.active{ display:grid; }
+  @media (max-width: 860px){ .tool-panel.active{ grid-template-columns:1fr; } }
+ 
+  .gen-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px; display:flex; flex-direction:column; gap:12px; }
+  .gen-card label{ font-size:12.5px; color:var(--muted); }
+  .gen-card input, .gen-card select, .gen-card textarea{
+    width:100%; padding:11px 13px; border-radius:9px; border:1px solid var(--line); background:var(--panel-2);
+    color:var(--text); font-size:14px; font-family:'Inter', sans-serif;
+  }
+  .gen-card textarea{ min-height:80px; resize:vertical; }
+  .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .btn-generate{ padding:11px; border-radius:9px; border:none; background:var(--grad); color:var(--ink); font-weight:700; font-size:14px; margin-top:4px; }
+ 
+  .gen-result{ background:var(--ink); border:1px solid var(--line); border-radius:16px; padding:22px; }
+  .gen-result-label{ font-size:12px; color:var(--muted); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.05em; }
+  .gen-result p{ font-size:14.5px; line-height:1.6; color:var(--text); }
+  .gen-actions{ display:flex; gap:8px; margin-top:14px; }
+  .btn-ghost-small{ padding:7px 14px; border-radius:8px; border:1px solid var(--line); background:transparent; color:var(--muted); font-size:12.5px; }
+  .btn-ghost-small:hover{ color:var(--text); }
+  .idea-list{ margin:0; padding-left:18px; display:flex; flex-direction:column; gap:10px; font-size:14px; color:var(--text); }
+  .campaign-list{ display:flex; flex-direction:column; gap:10px; }
+  .campaign-day{ font-size:13.5px; color:var(--text); padding:10px 0; border-bottom:1px solid var(--line); }
+  .campaign-day span{ display:inline-block; width:64px; color:var(--emerald); font-weight:600; }
+  .drop-zone{ border:1.5px dashed var(--line); border-radius:12px; padding:26px; text-align:center; color:var(--muted); font-size:13.5px; cursor:pointer; }
+  .drop-zone:hover{ border-color:rgba(52,211,153,0.5); }
+  .format-check-row{ display:flex; gap:14px; flex-wrap:wrap; }
+  .format-check{ display:flex; align-items:center; gap:7px; font-size:13px; color:var(--muted); }
+  .format-check input{ accent-color:var(--emerald); }
+  .format-tag-done{ padding:8px 14px; border-radius:8px; background:rgba(52,211,153,0.12); color:var(--emerald); font-size:13px; font-weight:600; }
+ 
   @media (max-width: 860px){
     .sidebar{ display:none; }
     .main{ padding:24px; }
@@ -149,7 +184,7 @@
 </style>
 </head>
 <body>
-
+ 
 <div class="app-shell">
   <aside class="sidebar">
     <div class="side-logo">
@@ -161,7 +196,7 @@
       </svg>
       <span>Time<span class="grad-text">back</span></span>
     </div>
-
+ 
     <nav class="nav-group" id="navGroup">
       <div class="nav-item active" data-section="accueil"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Accueil<span class="nav-dot"></span></div>
       <div class="nav-item" data-section="assistant"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v12H8l-4 4V4Z"/></svg>Assistant IA<span class="nav-dot"></span></div>
@@ -173,7 +208,7 @@
       <div class="nav-item" data-section="analytics"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>Analytics<span class="nav-dot"></span></div>
       <div class="nav-item" data-section="parametres"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>Paramètres<span class="nav-dot"></span></div>
     </nav>
-
+ 
     <div class="side-foot">
       <div class="user-card">
         <div class="user-avatar"></div>
@@ -182,30 +217,30 @@
       <a class="logout-link" href="auth.html">Se déconnecter</a>
     </div>
   </aside>
-
+ 
   <main class="main">
-
+ 
     <section class="section active" id="sec-accueil">
       <div class="page-head"><h1>Que veux-tu que je fasse ?</h1><p>Décris une action en langage naturel — Timeback prépare le plan et attend ta validation.</p></div>
-
+ 
       <div class="prompt-box">
         <textarea id="homePrompt" placeholder="Ex : Adapte cette affiche en Story Instagram et publie-la demain à 18h."></textarea>
         <div class="prompt-actions"><button class="prompt-send" onclick="goToAssistant()">Envoyer</button></div>
       </div>
-
+ 
       <div class="chip-row">
         <div class="sugg-chip" onclick="fillPrompt(this)">Adapter une affiche pour Instagram et Facebook</div>
         <div class="sugg-chip" onclick="fillPrompt(this)">Programmer une semaine de publications</div>
         <div class="sugg-chip" onclick="fillPrompt(this)">Générer un texte marketing pour ce visuel</div>
         <div class="sugg-chip" onclick="fillPrompt(this)">Préparer un message WhatsApp pour mes clients</div>
       </div>
-
+ 
       <div class="stat-grid">
         <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Automatisations actives</div></div>
         <div class="stat-card"><div class="stat-num">12</div><div class="stat-label">Publications ce mois</div></div>
         <div class="stat-card"><div class="stat-num">128<span>k</span></div><div class="stat-label">Portée cumulée</div></div>
       </div>
-
+ 
       <div class="mini-title">Connecteurs</div>
       <div class="connector-row">
         <div class="mini-connector"><span class="status-dot"></span>Instagram — non connecté</div>
@@ -213,7 +248,7 @@
         <div class="mini-connector"><span class="status-dot"></span>TikTok — non connecté</div>
       </div>
     </section>
-
+ 
     <section class="section" id="sec-assistant">
       <div class="page-head"><h1>Assistant IA</h1><p>La conversation avec ton assistant, et le plan avant chaque action.</p></div>
       <div class="chat-window">
@@ -237,7 +272,7 @@
         <button>Envoyer</button>
       </div>
     </section>
-
+ 
     <section class="section" id="sec-connecteurs">
       <div class="page-head"><h1>Connecteurs</h1><p>Relie tes outils pour que Timeback puisse agir à ta place.</p></div>
       <div class="connector-grid">
@@ -248,40 +283,123 @@
         <div class="connector-card"><div class="connector-top"><div class="connector-name">Gmail</div></div><div class="connector-status"><span class="status-dot"></span>Non connecté</div><button class="btn-connect">Connecter</button></div>
       </div>
     </section>
-
+ 
     <section class="section" id="sec-creation">
-      <div class="page-head"><h1>Création de contenu</h1><p>Textes, idées et campagnes générés par l'IA.</p></div>
-      <div class="placeholder"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg><h3>Bientôt disponible</h3><p>La génération de textes, idées et campagnes marketing arrivera ici.</p></div>
+      <div class="page-head"><h1>Création de contenu</h1><p>Textes, idées, campagnes et adaptations visuelles générés par l'IA.</p></div>
+ 
+      <div class="subtabs">
+        <div class="subtab active" data-tool="texte">Texte marketing</div>
+        <div class="subtab" data-tool="idees">Idées de contenu</div>
+        <div class="subtab" data-tool="campagne">Campagne</div>
+        <div class="subtab" data-tool="visuel">Adapter un visuel</div>
+      </div>
+ 
+      <div class="tool-panel active" id="tool-texte">
+        <div class="gen-card">
+          <div class="field-row">
+            <div><label>Plateforme</label><select><option>Instagram</option><option>Facebook</option><option>TikTok</option></select></div>
+            <div><label>Ton</label><select><option>Professionnel et dynamique</option><option>Chaleureux</option><option>Direct et court</option><option>Humoristique</option></select></div>
+          </div>
+          <label>Sujet ou brief</label>
+          <textarea placeholder="Ex : Annonce du lancement de notre nouvelle collection d'été"></textarea>
+          <button class="btn-generate" onclick="generate('texte')">Générer le texte</button>
+        </div>
+        <div class="gen-result" id="result-texte">
+          <div class="gen-result-label">Résultat</div>
+          <p>« Notre nouvelle collection été est enfin là ☀️ Des pièces pensées pour te suivre partout, sans jamais sacrifier le style. Découvre-la dès maintenant, en boutique et en ligne. »</p>
+          <div class="gen-actions"><button class="btn-ghost-small">Copier</button><button class="btn-ghost-small" onclick="generate('texte')">Régénérer</button></div>
+        </div>
+      </div>
+ 
+      <div class="tool-panel" id="tool-idees">
+        <div class="gen-card">
+          <label>Thème</label>
+          <textarea placeholder="Ex : Contenu pour une boutique de plantes d'intérieur"></textarea>
+          <button class="btn-generate" onclick="generate('idees')">Générer des idées</button>
+        </div>
+        <div class="gen-result" id="result-idees">
+          <div class="gen-result-label">5 idées de contenu</div>
+          <ul class="idea-list">
+            <li>Une routine d'entretien filmée en accéléré pour une plante populaire</li>
+            <li>Un avant/après d'une plante mal en point qui reprend vie</li>
+            <li>Un quiz en story : "Quelle plante te correspond ?"</li>
+            <li>Les 3 erreurs les plus fréquentes en arrosage</li>
+            <li>Les coulisses de la réception d'une nouvelle livraison</li>
+          </ul>
+        </div>
+      </div>
+ 
+      <div class="tool-panel" id="tool-campagne">
+        <div class="gen-card">
+          <div class="field-row">
+            <div><label>Produit ou offre</label><input type="text" placeholder="Ex : Soldes d'été -20%"></div>
+            <div><label>Durée</label><select><option>3 jours</option><option>5 jours</option><option>7 jours</option></select></div>
+          </div>
+          <button class="btn-generate" onclick="generate('campagne')">Générer la campagne</button>
+        </div>
+        <div class="gen-result" id="result-campagne">
+          <div class="gen-result-label">Campagne — 5 jours</div>
+          <div class="campaign-list">
+            <div class="campaign-day"><span>Jour 1</span>Teaser : "Quelque chose arrive..." (Story)</div>
+            <div class="campaign-day"><span>Jour 2</span>Annonce officielle des soldes (Post + Reel)</div>
+            <div class="campaign-day"><span>Jour 3</span>Mise en avant de 3 produits phares</div>
+            <div class="campaign-day"><span>Jour 4</span>Témoignage client (avis ou photo)</div>
+            <div class="campaign-day"><span>Jour 5</span>Dernier jour : rappel + compte à rebours</div>
+          </div>
+        </div>
+      </div>
+ 
+      <div class="tool-panel" id="tool-visuel">
+        <div class="gen-card">
+          <label>Visuel à adapter</label>
+          <div class="drop-zone">Glisse une image ici, ou clique pour l'importer</div>
+          <label style="margin-top:16px;">Formats souhaités</label>
+          <div class="format-check-row">
+            <label class="format-check"><input type="checkbox" checked>Story 9:16</label>
+            <label class="format-check"><input type="checkbox" checked>Post 1:1</label>
+            <label class="format-check"><input type="checkbox">Reel 9:16</label>
+            <label class="format-check"><input type="checkbox">Bannière 16:9</label>
+          </div>
+          <button class="btn-generate" onclick="generate('visuel')">Adapter le visuel</button>
+        </div>
+        <div class="gen-result" id="result-visuel">
+          <div class="gen-result-label">Formats générés</div>
+          <div class="format-check-row">
+            <span class="format-tag-done">✓ Story 9:16</span>
+            <span class="format-tag-done">✓ Post 1:1</span>
+          </div>
+        </div>
+      </div>
     </section>
-
+ 
     <section class="section" id="sec-planning">
       <div class="page-head"><h1>Planning</h1><p>Toutes tes publications programmées, en un coup d'œil.</p></div>
       <div class="placeholder"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><h3>Bientôt disponible</h3><p>Le calendrier de tes publications programmées arrivera ici.</p></div>
     </section>
-
+ 
     <section class="section" id="sec-automatisations">
       <div class="page-head"><h1>Automatisations</h1><p>Tes séquences de publications récurrentes.</p></div>
       <div class="placeholder"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 2 7 14h6l-2 8 10-12h-6l2-8Z"/></svg><h3>Aucune automatisation pour l'instant</h3><p>Demande à l'assistant de programmer une série de publications pour la voir apparaître ici.</p></div>
     </section>
-
+ 
     <section class="section" id="sec-historique">
       <div class="page-head"><h1>Historique</h1><p>Toutes les actions exécutées par Timeback.</p></div>
       <div class="placeholder"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><h3>Rien à afficher pour l'instant</h3><p>Chaque action confirmée par toi apparaîtra ici avec son statut.</p></div>
     </section>
-
+ 
     <section class="section" id="sec-analytics">
       <div class="page-head"><h1>Analytics</h1><p>Les performances de tes réseaux sociaux, centralisées.</p></div>
       <div class="placeholder"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><h3>Bientôt disponible</h3><p>Connecte au moins un réseau social pour voir tes statistiques ici.</p></div>
     </section>
-
+ 
     <section class="section" id="sec-parametres">
       <div class="page-head"><h1>Paramètres</h1><p>Ton compte, tes préférences, ton abonnement.</p></div>
       <div class="placeholder"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9"/></svg><h3>Bientôt disponible</h3><p>La gestion du compte et de l'abonnement arrivera ici.</p></div>
     </section>
-
+ 
   </main>
 </div>
-
+ 
 <script>
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => {
@@ -291,7 +409,26 @@
       document.getElementById('sec-' + item.dataset.section).classList.add('active');
     });
   });
-
+ 
+  document.querySelectorAll('.subtab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.subtab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('tool-' + tab.dataset.tool).classList.add('active');
+    });
+  });
+ 
+  function generate(tool){
+    const result = document.getElementById('result-' + tool);
+    result.style.transition = 'none';
+    result.style.opacity = '0.3';
+    setTimeout(() => {
+      result.style.transition = 'opacity .4s ease';
+      result.style.opacity = '1';
+    }, 250);
+  }
+ 
   function fillPrompt(el){
     document.getElementById('homePrompt').value = el.textContent;
   }
@@ -299,6 +436,11 @@
     document.querySelector('[data-section="assistant"]').click();
   }
 </script>
-
+ 
 </body>
 </html>
+ 
+
+
+
+
