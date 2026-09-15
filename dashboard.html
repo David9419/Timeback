@@ -1,4 +1,4 @@
-DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
@@ -25,9 +25,9 @@ DOCTYPE html>
   a{ color:inherit; text-decoration:none; }
   button{ font-family:'Inter', sans-serif; cursor:pointer; }
   .grad-text{ background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent; }
- 
+
   .app-shell{ display:flex; min-height:100vh; }
- 
+
   /* ---------- Sidebar ---------- */
   .sidebar{
     width:250px; flex:none; background:var(--panel); border-right:1px solid var(--line);
@@ -35,34 +35,55 @@ DOCTYPE html>
   }
   .side-logo{ display:flex; align-items:center; gap:10px; padding:6px 10px 22px; }
   .side-logo span{ font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:18px; }
-  .nav-group{ flex:1; display:flex; flex-direction:column; gap:2px; }
+  .nav-group{ flex:1; display:flex; flex-direction:column; gap:2px; position:relative; }
   .nav-item{
     display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:10px;
-    color:var(--muted); font-size:14.5px; font-weight:500; transition:.18s ease; cursor:pointer;
+    color:var(--muted); font-size:14.5px; font-weight:500; transition:color .18s ease, transform .18s ease; cursor:pointer;
+    position:relative; z-index:1;
   }
-  .nav-item svg{ flex:none; opacity:0.85; }
-  .nav-item:hover{ background:var(--panel-2); color:var(--text); }
-  .nav-item.active{ background:var(--panel-2); color:var(--text); }
+  .nav-item svg{ flex:none; opacity:0.85; transition:opacity .18s ease; }
+  .nav-item:hover{ color:var(--text); transform:translateX(2px); }
+  .nav-item.active{ color:var(--text); }
   .nav-item.active svg{ opacity:1; }
-  .nav-item.active .nav-dot{ background:var(--emerald); }
-  .nav-dot{ width:5px; height:5px; border-radius:50%; background:transparent; margin-left:auto; }
- 
+  .nav-item.active .nav-dot{ background:var(--emerald); box-shadow:0 0 8px var(--emerald); }
+  .nav-dot{ width:5px; height:5px; border-radius:50%; background:transparent; margin-left:auto; transition:.2s ease; }
+  .nav-indicator{
+    position:absolute; left:0; right:0; height:38px; border-radius:10px;
+    background:var(--panel-2); border-left:2px solid var(--emerald);
+    transition:transform .3s cubic-bezier(.4,0,.2,1); z-index:0;
+  }
+
+  .user-avatar{
+    width:34px; height:34px; border-radius:50%; background:var(--grad); flex:none;
+    background-size:cover; background-position:center; cursor:pointer; position:relative; overflow:hidden;
+  }
+  .user-avatar::after{
+    content:"✎"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.45); color:#fff; font-size:12px; opacity:0; transition:.18s ease;
+  }
+  .user-avatar:hover::after{ opacity:1; }
+
   .side-foot{ border-top:1px solid var(--line); padding-top:14px; margin-top:10px; }
   .user-card{ display:flex; align-items:center; gap:10px; padding:8px 10px; border-radius:10px; }
-  .user-avatar{ width:34px; height:34px; border-radius:50%; background:var(--grad); flex:none; }
   .user-name{ font-size:13.5px; font-weight:600; }
   .user-plan{ font-size:11.5px; color:var(--muted); }
   .logout-link{ display:block; margin-top:10px; font-size:13px; color:var(--muted); padding:8px 10px; }
   .logout-link:hover{ color:var(--text); }
- 
+
   /* ---------- Main ---------- */
   .main{ flex:1; padding:36px 44px; max-width:1100px; }
   .page-head{ margin-bottom:30px; }
   .page-head p{ color:var(--muted); font-size:14.5px; margin-top:6px; }
- 
+
   .section{ display:none; }
-  .section.active{ display:block; }
- 
+  .section.active{ display:block; animation:sectionIn .35s ease; }
+  @keyframes sectionIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+  .stagger > *{ animation:msgIn .4s ease both; }
+  .stagger > *:nth-child(1){ animation-delay:.03s; } .stagger > *:nth-child(2){ animation-delay:.08s; }
+  .stagger > *:nth-child(3){ animation-delay:.13s; } .stagger > *:nth-child(4){ animation-delay:.18s; }
+  .stagger > *:nth-child(5){ animation-delay:.23s; } .stagger > *:nth-child(6){ animation-delay:.28s; }
+  .stagger > *:nth-child(7){ animation-delay:.33s; } .stagger > *:nth-child(n+8){ animation-delay:.38s; }
+
   /* Accueil */
   .prompt-box{
     background:var(--panel); border:1px solid var(--line); border-radius:20px; padding:26px;
@@ -84,13 +105,63 @@ DOCTYPE html>
     font-size:13.5px; color:var(--muted); cursor:pointer; transition:.18s ease;
   }
   .sugg-chip:hover{ color:var(--text); border-color:rgba(52,211,153,0.4); }
- 
+
   .stat-grid{ display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; margin-bottom:30px; }
   .stat-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px; }
   .stat-num{ font-size:26px; font-weight:700; font-family:'Space Grotesk', sans-serif; }
   .stat-num span{ color:var(--emerald); font-size:15px; }
   .stat-label{ font-size:13px; color:var(--muted); margin-top:4px; }
- 
+  .stat-top-row{ display:flex; align-items:baseline; gap:10px; }
+  .stat-trend{ font-size:12px; font-weight:600; padding:2px 8px; border-radius:6px; }
+  .stat-trend.up{ color:var(--emerald); background:rgba(52,211,153,0.12); }
+
+  .home-cols{ display:grid; grid-template-columns:1.3fr 1fr; gap:26px; margin-top:8px; }
+  .convo-list{ display:flex; flex-direction:column; gap:10px; }
+  .convo-card{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:14px 16px; cursor:pointer; transition:border-color .2s ease; }
+  .convo-card:hover{ border-color:rgba(52,211,153,0.4); }
+  .convo-title{ font-size:14px; font-weight:600; }
+  .convo-snippet{ font-size:12.5px; color:var(--muted); margin-top:3px; }
+  .convo-time{ font-size:11px; color:var(--muted); margin-top:6px; opacity:0.7; }
+  .upcoming-list{ display:flex; flex-direction:column; gap:10px; }
+  .upcoming-item{ display:flex; align-items:center; gap:10px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:13px 16px; }
+  .upcoming-item .post-dot{ margin-top:0; }
+  .upcoming-title{ font-size:13.5px; font-weight:600; }
+  .upcoming-time{ font-size:11.5px; color:var(--muted); margin-top:2px; }
+  @media (max-width: 860px){ .home-cols{ grid-template-columns:1fr; } }
+
+  /* Assistant IA layout */
+  .assistant-layout{ display:grid; grid-template-columns:220px 1fr; gap:20px; }
+  .convo-sidebar{ display:flex; flex-direction:column; gap:6px; }
+  .btn-new-convo{ padding:10px; border-radius:10px; border:1px solid var(--line); background:var(--panel-2); color:var(--text); font-size:13px; font-weight:600; margin-bottom:8px; }
+  .convo-mini{ display:flex; align-items:center; justify-content:space-between; gap:6px; padding:10px 10px 10px 12px; border-radius:9px; font-size:13px; color:var(--muted); cursor:pointer; transition:background .15s ease; }
+  .convo-mini:hover{ background:var(--panel-2); color:var(--text); }
+  .convo-mini.active{ background:var(--panel-2); color:var(--text); }
+  .convo-mini-name{ overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .convo-mini-actions{ display:flex; gap:2px; flex:none; }
+  .convo-mini-actions button{ width:24px; height:24px; border-radius:6px; border:none; background:transparent; color:var(--muted); display:flex; align-items:center; justify-content:center; }
+  .convo-mini-actions button:hover{ background:rgba(231,236,243,0.12); color:var(--text); }
+
+  .msg-wrap{ display:flex; flex-direction:column; gap:6px; animation:msgIn .35s ease; }
+  .msg-wrap.from-user{ align-items:flex-end; }
+  .msg-wrap.from-ai{ align-items:flex-start; }
+  @keyframes msgIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:translateY(0); } }
+  .msg-toolbar{ display:flex; gap:6px; opacity:0; transition:opacity .15s ease; }
+  .msg-wrap:hover .msg-toolbar{ opacity:1; }
+  .msg-toolbar button{
+    width:24px; height:24px; border-radius:6px; border:1px solid var(--line); background:var(--panel-2);
+    color:var(--muted); font-size:12px; display:flex; align-items:center; justify-content:center;
+  }
+  .msg-toolbar button:hover{ color:var(--text); border-color:rgba(52,211,153,0.4); }
+  .chat-col{ display:flex; flex-direction:column; }
+  .plan-fields select{ background:transparent; border:1px solid transparent; color:var(--text); font-size:13.5px; font-family:'Inter', sans-serif; width:100%; padding:2px 0; }
+  .plan-fields select:not(:disabled){ background:var(--panel-2); border-color:rgba(52,211,153,0.5); border-radius:6px; padding:4px 6px; cursor:pointer; }
+  .plan-success{ font-size:13.5px; color:var(--emerald); font-weight:600; margin-top:4px; }
+  .attach-chip{ font-size:12.5px; color:var(--muted); background:var(--panel-2); border:1px solid var(--line); border-radius:8px; padding:8px 12px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center; }
+  .attach-chip span{ cursor:pointer; color:var(--muted); }
+  .attach-btn{ background:var(--panel-2); border:1px solid var(--line); border-radius:12px; padding:0 14px; font-size:16px; }
+  .typing-indicator{ font-size:13px; color:var(--muted); font-style:italic; padding:4px 2px; }
+  @media (max-width: 860px){ .assistant-layout{ grid-template-columns:1fr; } .convo-sidebar{ flex-direction:row; overflow-x:auto; } }
+
   .mini-title{ font-size:14px; font-weight:600; margin-bottom:14px; color:var(--text); }
   .connector-row{ display:flex; gap:12px; flex-wrap:wrap; }
   .mini-connector{
@@ -98,7 +169,7 @@ DOCTYPE html>
     background:var(--panel); border:1px solid var(--line); font-size:13px; color:var(--muted);
   }
   .status-dot{ width:7px; height:7px; border-radius:50%; background:#F59E0B; }
- 
+
   /* Assistant IA (chat view) */
   .chat-window{
     background:var(--panel); border:1px solid var(--line); border-radius:18px; padding:24px;
@@ -119,7 +190,7 @@ DOCTYPE html>
     color:var(--text); font-size:14.5px;
   }
   .chat-input-row button{ padding:0 22px; border-radius:12px; background:var(--grad); border:none; color:var(--ink); font-weight:700; }
- 
+
   /* Connecteurs */
   .connector-grid{ display:grid; grid-template-columns:repeat(auto-fill, minmax(230px, 1fr)); gap:16px; }
   .connector-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:12px; }
@@ -131,7 +202,7 @@ DOCTYPE html>
     color:var(--text); font-size:13.5px; font-weight:600;
   }
   .btn-connect:hover{ border-color:rgba(52,211,153,0.5); }
- 
+
   /* Placeholder sections */
   .placeholder{
     display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center;
@@ -140,15 +211,17 @@ DOCTYPE html>
   .placeholder svg{ margin-bottom:16px; opacity:0.7; }
   .placeholder h3{ color:var(--text); margin-bottom:8px; font-size:17px; }
   .placeholder p{ font-size:14px; max-width:40ch; }
- 
+
   /* Création de contenu */
   .subtabs{ display:flex; gap:6px; background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:5px; margin-bottom:22px; width:fit-content; }
   .subtab{ padding:9px 18px; border-radius:9px; font-size:13.5px; font-weight:600; color:var(--muted); cursor:pointer; }
   .subtab.active{ background:var(--grad); color:var(--ink); }
+  .subtab-hist{ padding:9px 18px; border-radius:9px; font-size:13.5px; font-weight:600; color:var(--muted); cursor:pointer; }
+  .subtab-hist.active{ background:var(--grad); color:var(--ink); }
   .tool-panel{ display:none; grid-template-columns:1fr 1fr; gap:22px; align-items:start; }
   .tool-panel.active{ display:grid; }
   @media (max-width: 860px){ .tool-panel.active{ grid-template-columns:1fr; } }
- 
+
   .gen-card{ background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:22px; display:flex; flex-direction:column; gap:12px; }
   .gen-card label{ font-size:12.5px; color:var(--muted); }
   .gen-card input, .gen-card select, .gen-card textarea{
@@ -158,7 +231,7 @@ DOCTYPE html>
   .gen-card textarea{ min-height:80px; resize:vertical; }
   .field-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .btn-generate{ padding:11px; border-radius:9px; border:none; background:var(--grad); color:var(--ink); font-weight:700; font-size:14px; margin-top:4px; }
- 
+
   .gen-result{ background:var(--ink); border:1px solid var(--line); border-radius:16px; padding:22px; }
   .gen-result-label{ font-size:12px; color:var(--muted); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.05em; }
   .gen-result p{ font-size:14.5px; line-height:1.6; color:var(--text); }
@@ -175,7 +248,83 @@ DOCTYPE html>
   .format-check{ display:flex; align-items:center; gap:7px; font-size:13px; color:var(--muted); }
   .format-check input{ accent-color:var(--emerald); }
   .format-tag-done{ padding:8px 14px; border-radius:8px; background:rgba(52,211,153,0.12); color:var(--emerald); font-size:13px; font-weight:600; }
- 
+  .recent-gen{ margin-top:14px; }
+  .recent-gen-label{ font-size:12px; color:var(--muted); margin-bottom:8px; text-transform:uppercase; letter-spacing:0.05em; }
+  .recent-gen-item{ font-size:13px; color:var(--muted); background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-bottom:8px; }
+  .toast{
+    position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); opacity:0;
+    background:var(--panel-2); border:1px solid rgba(52,211,153,0.4); color:var(--text); padding:12px 22px;
+    border-radius:10px; font-size:13.5px; z-index:100; transition:.25s ease; pointer-events:none;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* Planning */
+  .page-head-row{ display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:22px; gap:16px; flex-wrap:wrap; }
+  .page-head-row .page-head{ margin-bottom:0; }
+  .week-nav{ display:flex; align-items:center; gap:16px; margin-bottom:18px; }
+  .week-arrow{ width:32px; height:32px; border-radius:8px; border:1px solid var(--line); background:var(--panel); color:var(--muted); font-size:16px; }
+  .week-arrow:hover{ color:var(--text); }
+  .week-label{ font-size:14.5px; font-weight:600; }
+  .week-grid{ display:grid; grid-template-columns:repeat(7, 1fr); gap:10px; margin-bottom:18px; }
+  .week-col{ background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:12px 10px; min-height:180px; display:flex; flex-direction:column; gap:8px; }
+  .week-col.today{ border-color:rgba(52,211,153,0.5); }
+  .week-col-head{ font-size:12.5px; color:var(--muted); display:flex; flex-direction:column; gap:2px; margin-bottom:4px; }
+  .week-col-head span{ font-size:15px; color:var(--text); font-weight:600; }
+  .post-card{ background:var(--panel-2); border-radius:9px; padding:9px 10px; font-size:11.5px; color:var(--text); line-height:1.4; display:flex; gap:6px; align-items:flex-start; }
+  .post-dot{ width:8px; height:8px; border-radius:50%; flex:none; margin-top:3px; }
+  .dot-ig{ background:linear-gradient(115deg,#FEC53F,#E1306C); }
+  .dot-fb{ background:#1877F2; }
+  .dot-tk{ background:#E7ECF3; }
+  .dot-wa{ background:#25D366; }
+  .dot-gm{ background:#EA4335; }
+  .legend-row{ display:flex; gap:20px; }
+  .legend-item{ display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--muted); }
+  @media (max-width: 900px){ .week-grid{ grid-template-columns:repeat(2, 1fr); } }
+
+  /* Modal */
+  .modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:200;
+    align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-overlay.show{ display:flex; }
+  .modal-card{
+    width:100%; max-width:420px; background:var(--panel); border:1px solid var(--line); border-radius:18px;
+    padding:26px; display:flex; flex-direction:column; gap:10px; animation:msgIn .25s ease;
+  }
+  .modal-title{ font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:18px; margin-bottom:6px; }
+  .modal-card label{ font-size:12.5px; color:var(--muted); margin-top:4px; }
+  .modal-card select, .modal-card textarea, .modal-card input{
+    width:100%; padding:11px 13px; border-radius:9px; border:1px solid var(--line); background:var(--panel-2);
+    color:var(--text); font-size:14px; font-family:'Inter', sans-serif;
+  }
+  .modal-card textarea{ min-height:70px; resize:vertical; }
+  .modal-actions{ display:flex; justify-content:flex-end; gap:10px; margin-top:12px; }
+
+  /* Automatisations */
+  .auto-list{ display:flex; flex-direction:column; gap:14px; }
+  .auto-card{ background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:18px 20px; }
+  .auto-card.off{ opacity:0.6; }
+  .auto-top{ display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:10px; }
+  .auto-name{ font-size:14.5px; font-weight:600; }
+  .auto-meta{ font-size:12.5px; color:var(--muted); margin-top:2px; }
+  .auto-progress{ height:6px; background:var(--panel-2); border-radius:4px; overflow:hidden; margin-bottom:8px; }
+  .auto-progress-bar{ height:100%; background:var(--grad); }
+  .switch{ position:relative; display:inline-block; width:40px; height:22px; flex:none; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .slider{ position:absolute; inset:0; background:var(--panel-2); border:1px solid var(--line); border-radius:999px; transition:.2s; cursor:pointer; }
+  .slider::before{ content:""; position:absolute; width:16px; height:16px; left:2px; top:2px; background:var(--muted); border-radius:50%; transition:.2s; }
+  .switch input:checked + .slider{ background:var(--grad); border-color:transparent; }
+  .switch input:checked + .slider::before{ transform:translateX(18px); background:var(--ink); }
+
+  /* Historique */
+  .history-list{ display:flex; flex-direction:column; gap:2px; }
+  .history-row{ display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--panel); border:1px solid var(--line); border-radius:10px; margin-bottom:8px; }
+  .history-text{ flex:1; font-size:13.5px; }
+  .history-time{ font-size:12px; color:var(--muted); flex:none; }
+  .tag-done{ font-size:11.5px; font-weight:600; color:var(--emerald); background:rgba(52,211,153,0.12); padding:5px 10px; border-radius:7px; flex:none; }
+  .tag-cancel{ font-size:11.5px; font-weight:600; color:#F87171; background:rgba(248,113,113,0.12); padding:5px 10px; border-radius:7px; flex:none; }
+  @media (max-width: 700px){ .history-row{ flex-wrap:wrap; } }
+
   @media (max-width: 860px){
     .sidebar{ display:none; }
     .main{ padding:24px; }
@@ -184,7 +333,7 @@ DOCTYPE html>
 </style>
 </head>
 <body>
- 
+
 <div class="app-shell">
   <aside class="sidebar">
     <div class="side-logo">
@@ -196,8 +345,9 @@ DOCTYPE html>
       </svg>
       <span>Time<span class="grad-text">back</span></span>
     </div>
- 
+
     <nav class="nav-group" id="navGroup">
+      <div class="nav-indicator" id="navIndicator"></div>
       <div class="nav-item active" data-section="accueil"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>Accueil<span class="nav-dot"></span></div>
       <div class="nav-item" data-section="assistant"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v12H8l-4 4V4Z"/></svg>Assistant IA<span class="nav-dot"></span></div>
       <div class="nav-item" data-section="connecteurs"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="6" r="2.6"/><circle cx="18" cy="18" r="2.6"/><path d="M8.3 10.8 15.7 7M8.3 13.2l7.4 3.8"/></svg>Connecteurs<span class="nav-dot"></span></div>
@@ -208,74 +358,107 @@ DOCTYPE html>
       <div class="nav-item" data-section="analytics"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M12 20V4M20 20v-7"/></svg>Analytics<span class="nav-dot"></span></div>
       <div class="nav-item" data-section="parametres"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>Paramètres<span class="nav-dot"></span></div>
     </nav>
- 
+
     <div class="side-foot">
       <div class="user-card">
-        <div class="user-avatar"></div>
+        <div class="user-avatar" id="userAvatar" onclick="document.getElementById('avatarInput').click()"></div>
+        <input type="file" id="avatarInput" accept="image/*" style="display:none;" onchange="onAvatarChosen(this)">
         <div><div class="user-name">David</div><div class="user-plan">Plan gratuit</div></div>
       </div>
       <a class="logout-link" href="auth.html">Se déconnecter</a>
     </div>
   </aside>
- 
+
   <main class="main">
- 
+
     <section class="section active" id="sec-accueil">
       <div class="page-head"><h1>Que veux-tu que je fasse ?</h1><p>Décris une action en langage naturel — Timeback prépare le plan et attend ta validation.</p></div>
- 
+
       <div class="prompt-box">
         <textarea id="homePrompt" placeholder="Ex : Adapte cette affiche en Story Instagram et publie-la demain à 18h."></textarea>
         <div class="prompt-actions"><button class="prompt-send" onclick="goToAssistant()">Envoyer</button></div>
       </div>
- 
-      <div class="chip-row">
+
+      <div class="chip-row stagger">
         <div class="sugg-chip" onclick="fillPrompt(this)">Adapter une affiche pour Instagram et Facebook</div>
         <div class="sugg-chip" onclick="fillPrompt(this)">Programmer une semaine de publications</div>
         <div class="sugg-chip" onclick="fillPrompt(this)">Générer un texte marketing pour ce visuel</div>
         <div class="sugg-chip" onclick="fillPrompt(this)">Préparer un message WhatsApp pour mes clients</div>
       </div>
- 
-      <div class="stat-grid">
-        <div class="stat-card"><div class="stat-num">3</div><div class="stat-label">Automatisations actives</div></div>
-        <div class="stat-card"><div class="stat-num">12</div><div class="stat-label">Publications ce mois</div></div>
-        <div class="stat-card"><div class="stat-num">128<span>k</span></div><div class="stat-label">Portée cumulée</div></div>
+
+      <div class="stat-grid stagger">
+        <div class="stat-card"><div class="stat-top-row"><div class="stat-num">3</div><span class="stat-trend up">+1</span></div><div class="stat-label">Automatisations actives</div></div>
+        <div class="stat-card"><div class="stat-top-row"><div class="stat-num">12</div><span class="stat-trend up">+34%</span></div><div class="stat-label">Publications ce mois</div></div>
+        <div class="stat-card"><div class="stat-top-row"><div class="stat-num">128<span>k</span></div><span class="stat-trend up">+8%</span></div><div class="stat-label">Portée cumulée</div></div>
       </div>
- 
-      <div class="mini-title">Connecteurs</div>
-      <div class="connector-row">
+
+      <div class="home-cols">
+        <div>
+          <div class="mini-title">Reprendre une conversation</div>
+          <div class="convo-list stagger">
+            <div class="convo-card" onclick="openConversation('c1')">
+              <div class="convo-title">Nouvelle collection été</div>
+              <div class="convo-snippet">Adapte cette affiche au format Story Instagram...</div>
+              <div class="convo-time">Aujourd'hui, 17h48</div>
+            </div>
+            <div class="convo-card" onclick="openConversation('c2')">
+              <div class="convo-title">Automatisation TikTok</div>
+              <div class="convo-snippet">Publie un teaser tous les 2 jours à 20h...</div>
+              <div class="convo-time">Hier, 09h20</div>
+            </div>
+            <div class="convo-card" onclick="openConversation('c3')">
+              <div class="convo-title">Texte pour Facebook</div>
+              <div class="convo-snippet">Crée-moi un texte pour l'offre spéciale...</div>
+              <div class="convo-time">12 sept, 14h02</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="mini-title">Prochaines publications</div>
+          <div class="upcoming-list stagger">
+            <div class="upcoming-item"><span class="post-dot dot-ig"></span><div><div class="upcoming-title">Story — Nouvelle collection</div><div class="upcoming-time">Demain · 10h00</div></div></div>
+            <div class="upcoming-item"><span class="post-dot dot-fb"></span><div><div class="upcoming-title">Post — Offre spéciale</div><div class="upcoming-time">Jeu 17 · 18h00</div></div></div>
+            <div class="upcoming-item"><span class="post-dot dot-tk"></span><div><div class="upcoming-title">Reel — Coulisses</div><div class="upcoming-time">Ven 18 · 12h00</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mini-title" style="margin-top:26px;">Connecteurs</div>
+      <div class="connector-row stagger">
         <div class="mini-connector"><span class="status-dot"></span>Instagram — non connecté</div>
         <div class="mini-connector"><span class="status-dot"></span>Facebook — non connecté</div>
         <div class="mini-connector"><span class="status-dot"></span>TikTok — non connecté</div>
       </div>
     </section>
- 
+
     <section class="section" id="sec-assistant">
       <div class="page-head"><h1>Assistant IA</h1><p>La conversation avec ton assistant, et le plan avant chaque action.</p></div>
-      <div class="chat-window">
-        <div class="msg-user">Prends cette affiche, adapte-la au format Story Instagram et publie-la demain à 18h.</div>
-        <div class="msg-plan">
-          <div class="msg-plan-title">Voici ce que je m'apprête à faire</div>
-          <div class="plan-fields">
-            <div><span>Format</span>Story Instagram</div>
-            <div><span>Plateforme</span>Instagram</div>
-            <div><span>Date</span>Demain</div>
-            <div><span>Heure</span>18h00</div>
-          </div>
-          <div class="plan-actions">
-            <button class="plan-edit">Modifier</button>
-            <button class="plan-confirm">Confirmer</button>
+
+      <div class="assistant-layout">
+        <aside class="convo-sidebar" id="convoSidebar">
+          <button class="btn-new-convo" onclick="newConversation()">+ Nouvelle conversation</button>
+        </aside>
+
+        <div class="chat-col">
+          <div class="chat-window" id="chatMessages"></div>
+
+          <div id="attachChip" class="attach-chip" style="display:none;"></div>
+          <div class="chat-input-row">
+            <button class="attach-btn" onclick="document.getElementById('fileInput').click()" title="Joindre un visuel">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21.4 11.1 12.7 19.8a4.5 4.5 0 0 1-6.4-6.4l8-8a3 3 0 0 1 4.2 4.2l-7.6 7.6a1.5 1.5 0 0 1-2.1-2.1l7-7"/></svg>
+            </button>
+            <input type="file" id="fileInput" style="display:none;" onchange="onFileAttached(this)">
+            <input type="text" id="chatInputBox" placeholder="Écris ta prochaine demande..." onkeydown="if(event.key==='Enter'){sendChatMessage();}">
+            <button onclick="sendChatMessage()">Envoyer</button>
           </div>
         </div>
       </div>
-      <div class="chat-input-row">
-        <input type="text" placeholder="Écris ta prochaine demande...">
-        <button>Envoyer</button>
-      </div>
     </section>
- 
+
     <section class="section" id="sec-connecteurs">
       <div class="page-head"><h1>Connecteurs</h1><p>Relie tes outils pour que Timeback puisse agir à ta place.</p></div>
-      <div class="connector-grid">
+      <div class="connector-grid stagger">
         <div class="connector-card"><div class="connector-top"><div class="connector-name">Instagram</div></div><div class="connector-status"><span class="status-dot"></span>Non connecté</div><button class="btn-connect">Connecter</button></div>
         <div class="connector-card"><div class="connector-top"><div class="connector-name">Facebook</div></div><div class="connector-status"><span class="status-dot"></span>Non connecté</div><button class="btn-connect">Connecter</button></div>
         <div class="connector-card"><div class="connector-top"><div class="connector-name">TikTok</div></div><div class="connector-status"><span class="status-dot"></span>Non connecté</div><button class="btn-connect">Connecter</button></div>
@@ -283,52 +466,70 @@ DOCTYPE html>
         <div class="connector-card"><div class="connector-top"><div class="connector-name">Gmail</div></div><div class="connector-status"><span class="status-dot"></span>Non connecté</div><button class="btn-connect">Connecter</button></div>
       </div>
     </section>
- 
+
     <section class="section" id="sec-creation">
       <div class="page-head"><h1>Création de contenu</h1><p>Textes, idées, campagnes et adaptations visuelles générés par l'IA.</p></div>
- 
+
       <div class="subtabs">
         <div class="subtab active" data-tool="texte">Texte marketing</div>
         <div class="subtab" data-tool="idees">Idées de contenu</div>
         <div class="subtab" data-tool="campagne">Campagne</div>
         <div class="subtab" data-tool="visuel">Adapter un visuel</div>
       </div>
- 
+
       <div class="tool-panel active" id="tool-texte">
         <div class="gen-card">
           <div class="field-row">
-            <div><label>Plateforme</label><select><option>Instagram</option><option>Facebook</option><option>TikTok</option></select></div>
+            <div><label>Plateforme</label><select><option>Instagram</option><option>Facebook</option><option>TikTok</option><option>WhatsApp</option><option>Gmail</option></select></div>
             <div><label>Ton</label><select><option>Professionnel et dynamique</option><option>Chaleureux</option><option>Direct et court</option><option>Humoristique</option></select></div>
+          </div>
+          <div class="field-row">
+            <div><label>Objectif</label><select><option>Faire découvrir</option><option>Vendre</option><option>Fidéliser</option><option>Annoncer une nouveauté</option></select></div>
+            <div><label>Longueur</label><select><option>Courte</option><option>Moyenne</option><option>Longue</option></select></div>
           </div>
           <label>Sujet ou brief</label>
           <textarea placeholder="Ex : Annonce du lancement de notre nouvelle collection d'été"></textarea>
           <button class="btn-generate" onclick="generate('texte')">Générer le texte</button>
         </div>
-        <div class="gen-result" id="result-texte">
-          <div class="gen-result-label">Résultat</div>
-          <p>« Notre nouvelle collection été est enfin là ☀️ Des pièces pensées pour te suivre partout, sans jamais sacrifier le style. Découvre-la dès maintenant, en boutique et en ligne. »</p>
-          <div class="gen-actions"><button class="btn-ghost-small">Copier</button><button class="btn-ghost-small" onclick="generate('texte')">Régénérer</button></div>
+        <div>
+          <div class="gen-result" id="result-texte">
+            <div class="gen-result-label">Résultat</div>
+            <p>« Notre nouvelle collection été est enfin là ☀️ Des pièces pensées pour te suivre partout, sans jamais sacrifier le style. Découvre-la dès maintenant, en boutique et en ligne. »</p>
+            <div class="gen-actions">
+              <button class="btn-ghost-small" onclick="copyResult('result-texte')">Copier</button>
+              <button class="btn-ghost-small" onclick="generate('texte')">Régénérer</button>
+              <button class="btn-ghost-small" onclick="toastMsg('Ajouté au Planning')">Programmer</button>
+            </div>
+          </div>
+          <div class="recent-gen">
+            <div class="recent-gen-label">Générations récentes</div>
+            <div class="recent-gen-item">« Offre spéciale ce week-end seulement, à ne pas manquer 👀 »</div>
+            <div class="recent-gen-item">« On vous prépare quelque chose... patience 👀 »</div>
+          </div>
         </div>
       </div>
- 
+
       <div class="tool-panel" id="tool-idees">
         <div class="gen-card">
           <label>Thème</label>
           <textarea placeholder="Ex : Contenu pour une boutique de plantes d'intérieur"></textarea>
           <button class="btn-generate" onclick="generate('idees')">Générer des idées</button>
         </div>
-        <div class="gen-result" id="result-idees">
-          <div class="gen-result-label">5 idées de contenu</div>
-          <ul class="idea-list">
-            <li>Une routine d'entretien filmée en accéléré pour une plante populaire</li>
-            <li>Un avant/après d'une plante mal en point qui reprend vie</li>
-            <li>Un quiz en story : "Quelle plante te correspond ?"</li>
-            <li>Les 3 erreurs les plus fréquentes en arrosage</li>
-            <li>Les coulisses de la réception d'une nouvelle livraison</li>
-          </ul>
+        <div>
+          <div class="gen-result" id="result-idees">
+            <div class="gen-result-label">5 idées de contenu</div>
+            <ul class="idea-list">
+              <li>Une routine d'entretien filmée en accéléré pour une plante populaire</li>
+              <li>Un avant/après d'une plante mal en point qui reprend vie</li>
+              <li>Un quiz en story : "Quelle plante te correspond ?"</li>
+              <li>Les 3 erreurs les plus fréquentes en arrosage</li>
+              <li>Les coulisses de la réception d'une nouvelle livraison</li>
+            </ul>
+            <div class="gen-actions"><button class="btn-ghost-small" onclick="copyResult('result-idees')">Copier</button><button class="btn-ghost-small" onclick="generate('idees')">Régénérer</button></div>
+          </div>
         </div>
       </div>
- 
+
       <div class="tool-panel" id="tool-campagne">
         <div class="gen-card">
           <div class="field-row">
@@ -337,18 +538,21 @@ DOCTYPE html>
           </div>
           <button class="btn-generate" onclick="generate('campagne')">Générer la campagne</button>
         </div>
-        <div class="gen-result" id="result-campagne">
-          <div class="gen-result-label">Campagne — 5 jours</div>
-          <div class="campaign-list">
-            <div class="campaign-day"><span>Jour 1</span>Teaser : "Quelque chose arrive..." (Story)</div>
-            <div class="campaign-day"><span>Jour 2</span>Annonce officielle des soldes (Post + Reel)</div>
-            <div class="campaign-day"><span>Jour 3</span>Mise en avant de 3 produits phares</div>
-            <div class="campaign-day"><span>Jour 4</span>Témoignage client (avis ou photo)</div>
-            <div class="campaign-day"><span>Jour 5</span>Dernier jour : rappel + compte à rebours</div>
+        <div>
+          <div class="gen-result" id="result-campagne">
+            <div class="gen-result-label">Campagne — 5 jours</div>
+            <div class="campaign-list">
+              <div class="campaign-day"><span>Jour 1</span>Teaser : "Quelque chose arrive..." (Story)</div>
+              <div class="campaign-day"><span>Jour 2</span>Annonce officielle des soldes (Post + Reel)</div>
+              <div class="campaign-day"><span>Jour 3</span>Mise en avant de 3 produits phares</div>
+              <div class="campaign-day"><span>Jour 4</span>Témoignage client (avis ou photo)</div>
+              <div class="campaign-day"><span>Jour 5</span>Dernier jour : rappel + compte à rebours</div>
+            </div>
+            <div class="gen-actions"><button class="btn-ghost-small" onclick="toastMsg('Campagne ajoutée aux Automatisations')">Envoyer vers Automatisations</button></div>
           </div>
         </div>
       </div>
- 
+
       <div class="tool-panel" id="tool-visuel">
         <div class="gen-card">
           <label>Visuel à adapter</label>
@@ -362,54 +566,209 @@ DOCTYPE html>
           </div>
           <button class="btn-generate" onclick="generate('visuel')">Adapter le visuel</button>
         </div>
-        <div class="gen-result" id="result-visuel">
-          <div class="gen-result-label">Formats générés</div>
-          <div class="format-check-row">
-            <span class="format-tag-done">✓ Story 9:16</span>
-            <span class="format-tag-done">✓ Post 1:1</span>
+        <div>
+          <div class="gen-result" id="result-visuel">
+            <div class="gen-result-label">Formats générés</div>
+            <div class="format-check-row">
+              <span class="format-tag-done">✓ Story 9:16</span>
+              <span class="format-tag-done">✓ Post 1:1</span>
+            </div>
           </div>
         </div>
       </div>
+    
     </section>
- 
+
     <section class="section" id="sec-planning">
-      <div class="page-head"><h1>Planning</h1><p>Toutes tes publications programmées, en un coup d'œil.</p></div>
-      <div class="placeholder"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><h3>Bientôt disponible</h3><p>Le calendrier de tes publications programmées arrivera ici.</p></div>
+      <div class="page-head-row">
+        <div class="page-head"><h1>Planning</h1><p>Toutes tes publications programmées, semaine par semaine.</p></div>
+        <button class="btn-generate" style="width:auto; padding:11px 20px;" onclick="openPostModal()">+ Nouvelle publication</button>
+      </div>
+
+      <div class="week-nav">
+        <button class="week-arrow" onclick="changeWeek(-1)">‹</button>
+        <div class="week-label" id="weekLabel"></div>
+        <button class="week-arrow" onclick="changeWeek(1)">›</button>
+      </div>
+
+      <div class="week-grid stagger" id="weekGrid"></div>
+
+      <div class="legend-row">
+        <div class="legend-item"><span class="post-dot dot-ig"></span>Instagram</div>
+        <div class="legend-item"><span class="post-dot dot-fb"></span>Facebook</div>
+        <div class="legend-item"><span class="post-dot dot-tk"></span>TikTok</div>
+      </div>
     </section>
- 
+
+    <div class="modal-overlay" id="postModal">
+      <div class="modal-card">
+        <div class="modal-title">Nouvelle publication</div>
+        <label>Type de contenu</label>
+        <select id="mFormat"><option>Post carré</option><option>Story</option><option>Reel / vidéo courte</option><option>Bannière</option></select>
+        <label>Plateforme</label>
+        <select id="mPlatform"><option value="ig">Instagram</option><option value="fb">Facebook</option><option value="tk">TikTok</option><option value="wa">WhatsApp</option><option value="gm">Gmail</option></select>
+        <label>Légende / message</label>
+        <textarea id="mText" placeholder="Ce que tu veux publier ou envoyer..."></textarea>
+        <div class="field-row">
+          <div><label>Date</label><input type="date" id="mDate"></div>
+          <div><label>Heure</label><input type="time" id="mTime" value="12:00"></div>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-ghost-small" onclick="closePostModal()">Annuler</button>
+          <button class="btn-generate" style="width:auto; padding:10px 20px;" onclick="createPost()">Créer</button>
+        </div>
+      </div>
+    </div>
+
     <section class="section" id="sec-automatisations">
-      <div class="page-head"><h1>Automatisations</h1><p>Tes séquences de publications récurrentes.</p></div>
-      <div class="placeholder"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 2 7 14h6l-2 8 10-12h-6l2-8Z"/></svg><h3>Aucune automatisation pour l'instant</h3><p>Demande à l'assistant de programmer une série de publications pour la voir apparaître ici.</p></div>
+      <div class="page-head-row">
+        <div class="page-head"><h1>Automatisations</h1><p>Tes séquences de publications récurrentes.</p></div>
+        <button class="btn-generate" style="width:auto; padding:11px 20px;" onclick="openAutoModal()">+ Nouvelle automatisation</button>
+      </div>
+
+      <div class="stat-grid stagger" style="margin-bottom:26px;">
+        <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">Automatisations actives</div></div>
+        <div class="stat-card"><div class="stat-num">23</div><div class="stat-label">Publications envoyées ce mois</div></div>
+        <div class="stat-card"><div class="stat-num">~6<span>h</span></div><div class="stat-label">Temps estimé économisé</div></div>
+      </div>
+
+      <div class="auto-list stagger" id="autoList">
+        <div class="auto-card">
+          <div class="auto-top">
+            <div><div class="auto-name">Story quotidienne — Nouvelle collection</div><div class="auto-meta">Instagram, Facebook · Tous les jours à 18h00</div></div>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+          </div>
+          <div class="auto-progress"><div class="auto-progress-bar" style="width:57%"></div></div>
+          <div class="auto-meta">4 sur 7 publications déjà envoyées</div>
+        </div>
+
+        <div class="auto-card">
+          <div class="auto-top">
+            <div><div class="auto-name">Relance offre spéciale</div><div class="auto-meta">Facebook · Lun / Mer / Ven à 12h00</div></div>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+          </div>
+          <div class="auto-progress"><div class="auto-progress-bar" style="width:33%"></div></div>
+          <div class="auto-meta">1 sur 3 publications déjà envoyées</div>
+        </div>
+
+        <div class="auto-card">
+          <div class="auto-top">
+            <div><div class="auto-name">Réponse automatique WhatsApp</div><div class="auto-meta">WhatsApp · Hors horaires d'ouverture</div></div>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+          </div>
+          <div class="auto-meta">12 messages traités cette semaine</div>
+        </div>
+
+        <div class="auto-card">
+          <div class="auto-top">
+            <div><div class="auto-name">Récap hebdo par email</div><div class="auto-meta">Gmail · Tous les lundis à 08h00</div></div>
+            <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+          </div>
+          <div class="auto-meta">Prochain envoi : lundi prochain</div>
+        </div>
+
+        <div class="auto-card off">
+          <div class="auto-top">
+            <div><div class="auto-name">Teasers coulisses</div><div class="auto-meta">TikTok · Tous les 2 jours à 20h00</div></div>
+            <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+          </div>
+          <div class="auto-meta">En pause</div>
+        </div>
+      </div>
     </section>
- 
+
+    <div class="modal-overlay" id="autoModal">
+      <div class="modal-card">
+        <div class="modal-title">Nouvelle automatisation</div>
+        <label>Nom</label>
+        <input type="text" id="aName" placeholder="Ex : Relance du week-end">
+        <label>Plateforme</label>
+        <select id="aPlatform"><option>Instagram</option><option>Facebook</option><option>TikTok</option><option>WhatsApp</option><option>Gmail</option></select>
+        <label>Fréquence</label>
+        <select id="aFreq"><option>Tous les jours</option><option>Lun / Mer / Ven</option><option>Toutes les semaines</option><option>Tous les 2 jours</option></select>
+        <label>Heure</label>
+        <input type="time" id="aTime" value="18:00">
+        <div class="modal-actions">
+          <button class="btn-ghost-small" onclick="closeAutoModal()">Annuler</button>
+          <button class="btn-generate" style="width:auto; padding:10px 20px;" onclick="createAuto()">Créer</button>
+        </div>
+      </div>
+    </div>
+
     <section class="section" id="sec-historique">
-      <div class="page-head"><h1>Historique</h1><p>Toutes les actions exécutées par Timeback.</p></div>
-      <div class="placeholder"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg><h3>Rien à afficher pour l'instant</h3><p>Chaque action confirmée par toi apparaîtra ici avec son statut.</p></div>
+      <div class="page-head"><h1>Historique</h1><p>Toutes les actions exécutées par Timeback, par plateforme.</p></div>
+
+      <div class="subtabs">
+        <div class="subtab-hist active" data-hist="all">Tout</div>
+        <div class="subtab-hist" data-hist="ig">Instagram</div>
+        <div class="subtab-hist" data-hist="fb">Facebook</div>
+        <div class="subtab-hist" data-hist="tk">TikTok</div>
+        <div class="subtab-hist" data-hist="wa">WhatsApp</div>
+        <div class="subtab-hist" data-hist="gm">Gmail</div>
+      </div>
+
+      <div class="history-list stagger" id="historyList"></div>
     </section>
- 
+
     <section class="section" id="sec-analytics">
       <div class="page-head"><h1>Analytics</h1><p>Les performances de tes réseaux sociaux, centralisées.</p></div>
-      <div class="placeholder"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 20V10M12 20V4M20 20v-7"/></svg><h3>Bientôt disponible</h3><p>Connecte au moins un réseau social pour voir tes statistiques ici.</p></div>
+      <div class="stat-grid stagger">
+        <div class="stat-card"><div class="stat-num">+34<span>%</span></div><div class="stat-label">Engagement</div></div>
+        <div class="stat-card"><div class="stat-num">128<span>k</span></div><div class="stat-label">Portée</div></div>
+        <div class="stat-card"><div class="stat-num">2,4<span>k</span></div><div class="stat-label">Clics</div></div>
+      </div>
+      <div class="gen-card" style="max-width:100%;">
+        <div class="gen-result-label">Tendance sur 14 jours</div>
+        <svg viewBox="0 0 400 100" style="width:100%; height:100px;">
+          <polyline points="0,80 30,72 60,75 90,50 120,55 150,30 180,36 210,20 240,28 270,15 300,22 330,10 360,16 400,5" fill="none" stroke="url(#ring)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
     </section>
- 
+
     <section class="section" id="sec-parametres">
       <div class="page-head"><h1>Paramètres</h1><p>Ton compte, tes préférences, ton abonnement.</p></div>
-      <div class="placeholder"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9"/></svg><h3>Bientôt disponible</h3><p>La gestion du compte et de l'abonnement arrivera ici.</p></div>
+      <div class="gen-card" style="max-width:480px;">
+        <label>Nom</label><input type="text" value="David">
+        <label>Adresse e-mail</label><input type="email" value="david@exemple.com">
+        <label>Plan actuel</label>
+        <div class="auto-meta" style="margin-bottom:6px;">Plan gratuit — <a href="#" style="color:var(--emerald);">passer au plan Pro</a></div>
+        <button class="btn-generate">Enregistrer les modifications</button>
+      </div>
     </section>
- 
+
   </main>
 </div>
- 
+
+<div class="toast" id="toast"></div>
+
 <script>
+  function moveIndicator(item){
+    const nav = document.getElementById('navGroup');
+    const indicator = document.getElementById('navIndicator');
+    const navRect = nav.getBoundingClientRect();
+    const itemRect = item.getBoundingClientRect();
+    indicator.style.transform = `translateY(${itemRect.top - navRect.top}px)`;
+  }
+
   document.querySelectorAll('.nav-item').forEach(item => {
     item.addEventListener('click', () => {
       document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
       document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
       item.classList.add('active');
       document.getElementById('sec-' + item.dataset.section).classList.add('active');
+      moveIndicator(item);
     });
   });
- 
+  window.addEventListener('load', () => moveIndicator(document.querySelector('.nav-item.active')));
+
+  function onAvatarChosen(input){
+    if (input.files && input.files[0]){
+      const reader = new FileReader();
+      reader.onload = e => { document.getElementById('userAvatar').style.backgroundImage = `url(${e.target.result})`; };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
   document.querySelectorAll('.subtab').forEach(tab => {
     tab.addEventListener('click', () => {
       document.querySelectorAll('.subtab').forEach(t => t.classList.remove('active'));
@@ -418,7 +777,126 @@ DOCTYPE html>
       document.getElementById('tool-' + tab.dataset.tool).classList.add('active');
     });
   });
- 
+
+  function toastMsg(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+  }
+  function copyResult(id){
+    const el = document.getElementById(id);
+    const text = el.innerText.replace(/^(Résultat|5 idées de contenu)\n?/,'');
+    navigator.clipboard && navigator.clipboard.writeText(text);
+    toastMsg('Copié dans le presse-papier');
+  }
+
+  // ---- Planning: real date-driven week view ----
+  let weekOffset = 0;
+  let planningPosts = [
+    { date:'2026-09-15', time:'10:00', platform:'ig', label:'Story — Nouvelle collection' },
+    { date:'2026-09-17', time:'18:00', platform:'fb', label:'Post — Offre spéciale' },
+    { date:'2026-09-18', time:'12:00', platform:'tk', label:'Reel — Coulisses' },
+    { date:'2026-09-20', time:'20:00', platform:'ig', label:'Story — Récap semaine' }
+  ];
+  const dayNames = ['Lun','Mar','Mer','Jeu','Ven','Sam','Dim'];
+  const monthNames = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
+
+  function toISO(d){ return d.toISOString().slice(0,10); }
+
+  function renderWeek(){
+    const today = new Date(2026, 8, 14); // Monday 14 Sept 2026 (reference "today")
+    const monday = new Date(today);
+    monday.setDate(today.getDate() + weekOffset * 7);
+    const grid = document.getElementById('weekGrid');
+    grid.innerHTML = '';
+    const sunday = new Date(monday); sunday.setDate(monday.getDate() + 6);
+    document.getElementById('weekLabel').textContent =
+      `Semaine du ${monday.getDate()} au ${sunday.getDate()} ${monthNames[sunday.getMonth()]}`;
+
+    for (let i = 0; i < 7; i++){
+      const d = new Date(monday); d.setDate(monday.getDate() + i);
+      const iso = toISO(d);
+      const isToday = iso === toISO(today);
+      const col = document.createElement('div');
+      col.className = 'week-col' + (isToday ? ' today' : '');
+      const posts = planningPosts.filter(p => p.date === iso).sort((a,b) => a.time.localeCompare(b.time));
+      col.innerHTML = `<div class="week-col-head">${dayNames[i]}<span>${d.getDate()}</span></div>` +
+        posts.map(p => `<div class="post-card"><span class="post-dot dot-${p.platform}"></span>${p.time} · ${p.label}</div>`).join('');
+      grid.appendChild(col);
+    }
+  }
+  function changeWeek(dir){ weekOffset += dir; renderWeek(); }
+
+  function openPostModal(){
+    document.getElementById('mDate').value = toISO(new Date(2026,8,14+weekOffset*7));
+    document.getElementById('postModal').classList.add('show');
+  }
+  function closePostModal(){ document.getElementById('postModal').classList.remove('show'); }
+  function createPost(){
+    const format = document.getElementById('mFormat').value;
+    const platform = document.getElementById('mPlatform').value;
+    const date = document.getElementById('mDate').value;
+    const time = document.getElementById('mTime').value;
+    if (!date){ toastMsg('Choisis une date'); return; }
+    planningPosts.push({ date, time, platform, label: format });
+    closePostModal();
+    renderWeek();
+    toastMsg('Publication ajoutée au planning');
+  }
+
+  renderWeek();
+
+  // ---- Historique: per-platform log ----
+  const historyData = [
+    { platform:'ig', icon:'ig', text:'<b>Story publiée</b> — Nouvelle collection été', time:"Aujourd'hui · 18h02", status:'done' },
+    { platform:'fb', icon:'fb', text:'<b>Post programmé</b> — Offre spéciale -20%', time:'Hier · 09h14', status:'done' },
+    { platform:'tk', icon:'tk', text:"<b>Reel adapté</b> — Coulisses de l'atelier", time:'12 sept · 16h40', status:'done' },
+    { platform:'ig', icon:'ig', text:'<b>Texte généré</b> — Légende ton dynamique', time:'11 sept · 11h05', status:'done' },
+    { platform:'fb', icon:'fb', text:'<b>Publication annulée</b> — Post retiré avant envoi', time:'10 sept · 08h50', status:'cancel' },
+    { platform:'wa', icon:'wa', text:'<b>Message envoyé</b> — Réponse automatique client', time:'10 sept · 07h30', status:'done' },
+    { platform:'wa', icon:'wa', text:'<b>Message envoyé</b> — Confirmation de commande', time:'9 sept · 19h12', status:'done' },
+    { platform:'gm', icon:'gm', text:'<b>E-mail envoyé</b> — Récap hebdomadaire', time:'9 sept · 08h00', status:'done' },
+    { platform:'gm', icon:'gm', text:'<b>Brouillon préparé</b> — Réponse à un client', time:'8 sept · 14h20', status:'done' },
+    { platform:'tk', icon:'tk', text:'<b>Photo adaptée</b> — Format vertical pour Reel', time:'8 sept · 10h05', status:'done' }
+  ];
+
+  function renderHistory(filter){
+    const list = historyData.filter(h => filter === 'all' || h.platform === filter);
+    document.getElementById('historyList').innerHTML = list.map(h => `
+      <div class="history-row"><span class="post-dot dot-${h.icon}"></span><div class="history-text">${h.text}</div><div class="history-time">${h.time}</div><span class="${h.status === 'done' ? 'tag-done' : 'tag-cancel'}">${h.status === 'done' ? 'Réussi' : 'Annulé'}</span></div>
+    `).join('') || '<div class="history-time">Aucune activité pour cette plateforme.</div>';
+  }
+  document.querySelectorAll('.subtab-hist').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.subtab-hist').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      renderHistory(tab.dataset.hist);
+    });
+  });
+  renderHistory('all');
+
+  function openAutoModal(){ document.getElementById('autoModal').classList.add('show'); }
+  function closeAutoModal(){ document.getElementById('autoModal').classList.remove('show'); }
+  function createAuto(){
+    const name = document.getElementById('aName').value.trim() || 'Nouvelle automatisation';
+    const platform = document.getElementById('aPlatform').value;
+    const freq = document.getElementById('aFreq').value;
+    const time = document.getElementById('aTime').value;
+    const card = document.createElement('div');
+    card.className = 'auto-card';
+    card.style.animation = 'msgIn .3s ease';
+    card.innerHTML = `<div class="auto-top">
+        <div><div class="auto-name">${name}</div><div class="auto-meta">${platform} · ${freq} à ${time}</div></div>
+        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+      </div>
+      <div class="auto-meta">Aucune publication envoyée pour l'instant</div>`;
+    document.getElementById('autoList').appendChild(card);
+    closeAutoModal();
+    toastMsg('Automatisation créée');
+  }
+
   function generate(tool){
     const result = document.getElementById('result-' + tool);
     result.style.transition = 'none';
@@ -428,19 +906,239 @@ DOCTYPE html>
       result.style.opacity = '1';
     }, 250);
   }
- 
+
+  // ---- Assistant IA: conversations model + real interactive chat ----
+  let planCounter = 0;
+  let attachedFileName = null;
+  let convoCounter = 0;
+
+  let conversations = [
+    { id:'c1', name:'Nouvelle collection été', log:[
+      { type:'user', text:"Prends cette affiche, adapte-la au format Story Instagram et publie-la demain à 18h." },
+      { type:'plan' }
+    ]},
+    { id:'c2', name:'Automatisation TikTok', log:[
+      { type:'user', text:"Publie un teaser tous les 2 jours à 20h sur TikTok." },
+      { type:'plan' }
+    ]},
+    { id:'c3', name:'Texte pour Facebook', log:[
+      { type:'user', text:"Crée-moi un texte pour l'offre spéciale, ton dynamique." }
+    ]},
+  ];
+  let activeConvoId = 'c1';
+
+  function escapeAttr(s){ return s.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+
+  function userMsgWrapHTML(text){
+    return `<div class="msg-wrap from-user">
+      <div class="msg-user">${text}</div>
+      <div class="msg-toolbar">
+        <button onclick="copyText('${escapeAttr(text)}')" title="Copier">⧉</button>
+        <button onclick="downloadText('${escapeAttr(text)}')" title="Enregistrer">⬇</button>
+        <button onclick="shareText('${escapeAttr(text)}')" title="Partager">↗</button>
+      </div>
+    </div>`;
+  }
+
+  function planCardHTML(id){
+    const summary = 'Post carre - Instagram - Aujourd hui, 12h00';
+    return `
+      <div class="msg-wrap from-ai">
+        <div class="msg-plan" id="${id}">
+          <div class="msg-plan-title">Voici ce que je m'apprête à faire</div>
+          <div class="plan-fields">
+            <div><span>Format</span><select id="${id}-format" disabled><option>Post carré</option><option>Story Instagram</option><option>Reel / vidéo courte</option><option>Bannière</option></select></div>
+            <div><span>Plateforme</span><select id="${id}-platform" disabled><option>Instagram</option><option>Facebook</option><option>TikTok</option><option>WhatsApp</option></select></div>
+            <div><span>Date</span><select id="${id}-date" disabled><option>Aujourd'hui</option><option>Demain</option><option>Vendredi</option><option>Lundi prochain</option></select></div>
+            <div><span>Heure</span><select id="${id}-time" disabled><option>12h00</option><option>09h00</option><option>18h00</option><option>20h00</option></select></div>
+          </div>
+          <div class="plan-actions" id="${id}-actions">
+            <button class="plan-edit" onclick="enableEdit('${id}')">Modifier</button>
+            <button class="plan-confirm" onclick="confirmPlan('${id}')">Confirmer</button>
+          </div>
+          <div class="plan-success" id="${id}-success"></div>
+        </div>
+        <div class="msg-toolbar">
+          <button onclick="copyText('${summary}')" title="Copier">⧉</button>
+          <button onclick="downloadText('${summary}')" title="Enregistrer">⬇</button>
+          <button onclick="shareText('${summary}')" title="Partager">↗</button>
+        </div>
+      </div>`;
+  }
+
+  function enableEdit(id){
+    ['format','platform','date','time'].forEach(f => { document.getElementById(id+'-'+f).disabled = false; });
+  }
+  function confirmPlan(id){
+    const format = document.getElementById(id+'-format').value;
+    const date = document.getElementById(id+'-date').value;
+    const time = document.getElementById(id+'-time').value;
+    ['format','platform','date','time'].forEach(f => { document.getElementById(id+'-'+f).disabled = true; });
+    document.getElementById(id+'-actions').style.display = 'none';
+    document.getElementById(id+'-success').textContent = `✓ Publication programmée · ${format} · ${date}, ${time}`;
+  }
+
+  function copyText(text){ navigator.clipboard && navigator.clipboard.writeText(text); }
+  function downloadText(text){
+    const blob = new Blob([text], {type:'text/plain'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'timeback-message.txt';
+    a.click();
+  }
+  function shareText(text){
+    if (navigator.share) navigator.share({ text }); else copyText(text);
+  }
+
+  function renderSidebar(){
+    const box = document.getElementById('convoSidebar');
+    box.querySelectorAll('.convo-mini').forEach(el => el.remove());
+    conversations.forEach((c, i) => {
+      const item = document.createElement('div');
+      item.className = 'convo-mini' + (c.id === activeConvoId ? ' active' : '');
+      item.style.animation = `msgIn .3s ease ${i * 0.05}s both`;
+      item.onclick = () => selectConversation(c.id);
+      item.innerHTML = `<span class="convo-mini-name">${c.name}</span>
+        <span class="convo-mini-actions">
+          <button onclick="event.stopPropagation(); renameConversation('${c.id}')" title="Renommer">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+          </button>
+          <button onclick="event.stopPropagation(); deleteConversation('${c.id}')" title="Supprimer">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2m2 0-1 13a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 7"/></svg>
+          </button>
+        </span>`;
+      box.appendChild(item);
+    });
+  }
+
+  function renderChat(){
+    const conv = conversations.find(c => c.id === activeConvoId);
+    const chat = document.getElementById('chatMessages');
+    if (!conv || conv.log.length === 0){
+      chat.innerHTML = '<div class="typing-indicator">Nouvelle conversation — écris ta première demande ci-dessous.</div>';
+      return;
+    }
+    chat.innerHTML = conv.log.map(m => m.type === 'user' ? userMsgWrapHTML(m.text) : planCardHTML('plan-' + Math.random().toString(36).slice(2))).join('');
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  function selectConversation(id){
+    activeConvoId = id;
+    renderSidebar();
+    renderChat();
+  }
+
+  function renameConversation(id){
+    const conv = conversations.find(c => c.id === id);
+    const nameEl = document.querySelector(`.convo-mini[data-id="${id}"] .convo-mini-name`);
+    if (!nameEl || nameEl.querySelector('input')) return;
+    const current = conv.name;
+    nameEl.innerHTML = `<input type="text" class="convo-rename-input" value="${current.replace(/"/g,'&quot;')}">`;
+    const input = nameEl.querySelector('input');
+    input.focus();
+    input.select();
+    const commit = () => {
+      const v = input.value.trim();
+      conv.name = v || current;
+      renderSidebar();
+    };
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') commit(); if (e.key === 'Escape') renderSidebar(); });
+    input.addEventListener('blur', commit);
+  }
+
+  function deleteConversation(id){
+    conversations = conversations.filter(c => c.id !== id);
+    if (activeConvoId === id){
+      activeConvoId = conversations.length ? conversations[0].id : null;
+    }
+    renderSidebar();
+    renderChat();
+  }
+
+  function newConversation(){
+    convoCounter++;
+    const id = 'new-' + convoCounter;
+    conversations.unshift({ id, name:'Nouvelle conversation', log:[] });
+    activeConvoId = id;
+    renderSidebar();
+    renderChat();
+  }
+
+  function sendChatMessage(){
+    const box = document.getElementById('chatInputBox');
+    const text = box.value.trim();
+    if (!text && !attachedFileName) return;
+    const chat = document.getElementById('chatMessages');
+    const finalText = attachedFileName ? `[Visuel joint : ${attachedFileName}] ${text}` : text;
+
+    let conv = conversations.find(c => c.id === activeConvoId);
+    if (!conv){ newConversation(); conv = conversations.find(c => c.id === activeConvoId); }
+    conv.log.push({ type:'user', text: finalText });
+
+    if (chat.querySelector('.typing-indicator') && conv.log.length === 1) chat.innerHTML = '';
+    const wrap = document.createElement('div');
+    wrap.innerHTML = userMsgWrapHTML(finalText);
+    chat.appendChild(wrap.firstElementChild);
+    box.value = '';
+    clearAttachment();
+    chat.scrollTop = chat.scrollHeight;
+
+    const typing = document.createElement('div');
+    typing.className = 'typing-indicator';
+    typing.textContent = 'Timeback réfléchit...';
+    chat.appendChild(typing);
+    chat.scrollTop = chat.scrollHeight;
+
+    setTimeout(() => {
+      typing.remove();
+      planCounter++;
+      const id = 'plan-dyn-' + planCounter;
+      conv.log.push({ type:'plan' });
+      const wrapper = document.createElement('div');
+      wrapper.innerHTML = planCardHTML(id);
+      chat.appendChild(wrapper.firstElementChild);
+      chat.scrollTop = chat.scrollHeight;
+    }, 900);
+  }
+
+  function onFileAttached(input){
+    if (input.files && input.files[0]){
+      attachedFileName = input.files[0].name;
+      const chip = document.getElementById('attachChip');
+      chip.style.display = 'flex';
+      chip.innerHTML = `📎 ${attachedFileName} <span onclick="clearAttachment()">✕</span>`;
+    }
+  }
+  function clearAttachment(){
+    attachedFileName = null;
+    document.getElementById('fileInput').value = '';
+    document.getElementById('attachChip').style.display = 'none';
+  }
+
+  function openConversation(id){
+    document.querySelector('[data-section="assistant"]').click();
+    if (id) selectConversation(id);
+  }
+
+  renderSidebar();
+  renderChat();
+
   function fillPrompt(el){
     document.getElementById('homePrompt').value = el.textContent;
   }
   function goToAssistant(){
+    const home = document.getElementById('homePrompt');
     document.querySelector('[data-section="assistant"]').click();
+    if (home.value.trim()){
+      document.getElementById('chatInputBox').value = home.value.trim();
+      home.value = '';
+      sendChatMessage();
+    }
   }
 </script>
- 
+
 </body>
 </html>
- 
-
 
 
 
